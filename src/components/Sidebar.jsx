@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { icons, mainMenu, financeOps, footerLinks } from "../data";
 
-function NavLink({ item, active, onClick, small }) {
+export function NavLink({ item, active, onClick, small }) {
+  // Items without a dedicated white glyph get their grey icon turned white on the purple pill.
+  const iconClass = active ? (item.activeIcon ? "" : "on-accent") : "mono";
   return (
     <button type="button" className={`nav-link${active ? " is-active" : ""}${small ? " is-small" : ""}`} onClick={onClick}>
       <span className="nav-link__inner">
-        <img className={active ? "" : "mono"} src={active && item.activeIcon ? item.activeIcon : item.icon} alt="" width="18" height="18" />
+        <img className={iconClass} src={active && item.activeIcon ? item.activeIcon : item.icon} alt="" width="18" height="18" />
         <span>{item.label}</span>
       </span>
       {active && <img src={icons.activeDot} alt="" width="6" height="6" />}

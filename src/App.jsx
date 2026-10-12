@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Sidebar from "./components/Sidebar";
 import Navbar, { MobileTopbar } from "./components/Navbar";
 import MarketTrends from "./components/MarketTrends";
 import Transactions from "./components/Transactions";
 import { ConvertCard, Watchlist, Registration } from "./components/RightPanel";
 import MobileNav from "./components/MobileNav";
+import MobileMenu from "./components/MobileMenu";
 import Portfolio from "./components/Portfolio";
 
 function readTheme() {
@@ -50,6 +51,8 @@ export default function App() {
     if (route) window.location.hash = route === "overview" ? "#/" : `#/${route}`;
   };
 
+  const closeDrawer = useCallback(() => setDrawerOpen(false), []);
+
   const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
 
   return (
@@ -79,6 +82,7 @@ export default function App() {
       </div>
 
       <MobileNav page={page} onNavigate={navigate} />
+      <MobileMenu open={drawerOpen} onClose={closeDrawer} theme={theme} onToggleTheme={toggleTheme} />
     </div>
   );
 }
