@@ -55,6 +55,8 @@
   --text-head: #8c8c8c;
   --success-strong: #3f9c77;
   --tooltip: #ffffff;
+  --m-menu-surface: rgba(255, 255, 255, 0.8);
+  --m-menu-name: #4a4a4a;
   color-scheme: light;
 }
 
@@ -106,6 +108,8 @@
   --text-head: #8c8c8c;
   --success-strong: #48b187;
   --tooltip: #262626;
+  --m-menu-surface: rgba(26, 26, 26, 0.85);
+  --m-menu-name: #ffffff;
   color-scheme: dark;
 }
 
@@ -2797,5 +2801,191 @@ input:focus-visible {
 
   .pf-tip {
     font-size: 11px;
+  }
+}
+
+/* ═════════════ Mobile side menu (Figma 184:7614) ═════════════ */
+
+.nav-link img.on-accent {
+  filter: brightness(0) invert(1);
+}
+
+.m-menu {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  /* The desktop sidebar drawer is replaced by the floating menu on phones. */
+  .sidebar,
+  .scrim {
+    display: none;
+  }
+
+  body.is-locked {
+    overflow: hidden;
+  }
+
+  .m-menu {
+    --m-menu-top: max(8px, env(safe-area-inset-top));
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: block;
+    background: rgba(0, 0, 0, 0.25);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+  }
+
+  .m-menu.is-open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.2s ease;
+  }
+
+  .m-menu__close {
+    position: absolute;
+    top: var(--m-menu-top);
+    left: 8px;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--m-menu-surface);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .m-menu__panel {
+    position: absolute;
+    top: calc(var(--m-menu-top) + 64px);
+    left: 8px;
+    right: 8px;
+    bottom: calc(8px + env(safe-area-inset-bottom));
+    max-height: 744px;
+    display: flex;
+    flex-direction: column;
+    padding: 12px 12px 24px;
+    border-radius: 29px;
+    background: var(--m-menu-surface);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    transform: translateY(-12px) scale(0.98);
+    transform-origin: top left;
+    transition: transform 0.25s ease;
+  }
+
+  .m-menu.is-open .m-menu__panel {
+    transform: none;
+  }
+
+  .m-menu__top {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 8px;
+  }
+
+  .m-menu__user {
+    height: 110px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .m-menu__avatar {
+    display: block;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .m-menu__user-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .m-menu__user-text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .m-menu__name {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.54px;
+    color: var(--m-menu-name);
+  }
+
+  .m-menu__since {
+    font-size: 12px;
+    font-weight: 300;
+    letter-spacing: -0.36px;
+    color: #8c8c8c;
+  }
+
+  .m-menu__profile {
+    flex-shrink: 0;
+    padding: 8px;
+    border-radius: 6px;
+    background: var(--kpi-bg);
+    box-shadow: var(--kpi-shadow);
+    font-size: 14px;
+    line-height: round(nearest, 1.1em, 1px);
+    letter-spacing: -0.14px;
+    color: var(--text-ink);
+    white-space: nowrap;
+  }
+
+  .m-menu__divider {
+    flex: 0 0 1px;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .m-menu__top .m-menu__divider {
+    margin-top: -10px;
+  }
+
+  .m-menu__links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .m-menu__links--small {
+    gap: 4px;
+    padding: 8px;
+  }
+
+  .m-menu__links--small .theme-toggle__label {
+    color: var(--text-1);
+  }
+
+  .m-menu__logout-wrap {
+    margin-top: auto;
+    padding: 24px 12px 0;
+  }
+
+  .m-menu__logout {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 8px;
+    border-radius: 8px;
+    background: var(--raised);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.42px;
+    color: var(--error);
   }
 }

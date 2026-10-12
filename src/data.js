@@ -42,6 +42,9 @@ export const icons = {
   mMenu: a("m-menu.svg"),
   notifications: a("notifications.svg"),
   noaOrb: a("noa-orb.png"),
+  close: a("close.svg"),
+  logout: a("logout.svg"),
+  profile: a("profile.png"),
 };
 
 // `route` links an item to a page; `activeIcon` is the white glyph shown on the purple pill.
