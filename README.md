@@ -1,7 +1,18 @@
-# Zentra Home
+# Zentra Dashboard
 
-React + Vite build of the Zentra dashboard **Home page** from Figma
-(`zentra (Copy)`, section `172:17745`):
+React + Vite build of the Zentra dashboard from Figma (`zentra (Copy)`).
+
+## Pages
+
+- **Home** (`#/`), section `172:17745`
+- **Portfolio** (`#/portfolio`), section `172:17746`
+  - Desktop `53:2964` (1440 × 1024).
+  - Mobile `156:10171` (402 px).
+  - Below 1280 px the right column wraps under the main column. Below 768 px the stats become a 2 × 2 grid, the header buttons become icon-only, and the assets table scrolls sideways.
+
+Sidebar and bottom-nav links switch pages through the URL hash, so deep links work on static hosting.
+
+## Home page details
 
 - **Desktop, light** (`2030:306`, 1440 × 1024) is the primary reference, matched to the pixel at 1440 px.
 - **Desktop, dark** (`15:1091`) is the same layout with theme tokens, switched from the sidebar's Light/Dark Mode toggle (remembered in `localStorage`).
@@ -28,6 +39,6 @@ Import the repository in Vercel. It detects the Vite preset automatically (build
 
 ## Structure
 
-- `src/data.js`: content, asset paths and chart geometry from the design
-- `src/components/`: Sidebar, Navbar (+ mobile top bar), MarketTrends, Transactions, RightPanel (Convert, Watchlist, Registration), MobileNav
+- `src/data.js` and `src/portfolioData.js`: content, asset paths and chart geometry from the design
+- `src/components/`: Sidebar, Navbar (+ mobile top bar), MarketTrends, Transactions, RightPanel (Convert, Watchlist, Registration), Portfolio, MobileNav
 - `src/styles.css`: design tokens (light/dark), layout and breakpoints (1280 / 1024 / 860 / 768)

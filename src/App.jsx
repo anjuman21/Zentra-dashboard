@@ -5,6 +5,7 @@ import MarketTrends from "./components/MarketTrends";
 import Transactions from "./components/Transactions";
 import { ConvertCard, Watchlist, Registration } from "./components/RightPanel";
 import MobileNav from "./components/MobileNav";
+import Portfolio from "./components/Portfolio";
 
 function readTheme() {
   try {
@@ -14,8 +15,12 @@ function readTheme() {
   }
 }
 
+// Hash routes keep deep links working on static hosting (Vercel) without rewrites.
+const readPage = () => (window.location.hash === "#/portfolio" ? "portfolio" : "overview");
+
 export default function App() {
   const [theme, setTheme] = useState(readTheme);
+  const [page, setPage] = useState(readPage);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
@@ -27,31 +32,53 @@ export default function App() {
     }
   }, [theme]);
 
+  useEffect(() => {
+    const onHash = () => {
+      setPage(readPage());
+      window.scrollTo(0, 0);
+    };
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+
+  useEffect(() => {
+    document.title = page === "portfolio" ? "Zentra — Portfolio" : "Zentra — Home";
+  }, [page]);
+
+  const navigate = (route) => {
+    setDrawerOpen(false);
+    if (route) window.location.hash = route === "overview" ? "#/" : `#/${route}`;
+  };
+
   const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
 
   return (
     <div className="app">
-      <Sidebar open={drawerOpen} onClose={() => setDrawerOpen(false)} theme={theme} onToggleTheme={toggleTheme} />
+      <Sidebar page={page} onNavigate={navigate} open={drawerOpen} onClose={() => setDrawerOpen(false)} theme={theme} onToggleTheme={toggleTheme} />
       {drawerOpen && <div className="scrim" onClick={() => setDrawerOpen(false)} />}
 
       <div className="main-area">
         <Navbar onMenu={() => setDrawerOpen(true)} />
         <MobileTopbar onMenu={() => setDrawerOpen(true)} />
 
-        <main className="content">
-          <section className="main-col">
-            <MarketTrends />
-            <Transactions />
-          </section>
-          <aside className="right-col">
-            <ConvertCard />
-            <Watchlist />
-            <Registration />
-          </aside>
-        </main>
+        {page === "portfolio" ? (
+          <Portfolio />
+        ) : (
+          <main className="content">
+            <section className="main-col">
+              <MarketTrends />
+              <Transactions />
+            </section>
+            <aside className="right-col">
+              <ConvertCard />
+              <Watchlist />
+              <Registration />
+            </aside>
+          </main>
+        )}
       </div>
 
-      <MobileNav />
+      <MobileNav page={page} onNavigate={navigate} />
     </div>
   );
 }
