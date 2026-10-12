@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { icons, mainMenu, financeOps, footerLinks } from "../data";
 
 function NavLink({ item, active, onClick, small }) {
   return (
     <button type="button" className={`nav-link${active ? " is-active" : ""}${small ? " is-small" : ""}`} onClick={onClick}>
       <span className="nav-link__inner">
-        <img className={active ? "" : "mono"} src={item.icon} alt="" width="18" height="18" />
+        <img className={active ? "" : "mono"} src={active && item.activeIcon ? item.activeIcon : item.icon} alt="" width="18" height="18" />
         <span>{item.label}</span>
       </span>
       {active && <img src={icons.activeDot} alt="" width="6" height="6" />}
@@ -49,13 +49,21 @@ function SetupCard() {
   );
 }
 
-export default function Sidebar({ open, onClose, theme, onToggleTheme }) {
-  const [active, setActive] = useState("Overview");
+export default function Sidebar({ page, onNavigate, open, onClose, theme, onToggleTheme }) {
+  const routed = mainMenu.find((m) => m.route === page);
+  const [active, setActive] = useState(routed ? routed.label : "Overview");
   const dark = theme === "dark";
 
+  // Routed items follow the URL; the rest only highlight locally.
+  useEffect(() => {
+    if (routed) setActive(routed.label);
+  }, [routed]);
+
   const select = (label) => {
+    const item = mainMenu.find((m) => m.label === label);
     setActive(label);
-    onClose();
+    if (item && item.route) onNavigate(item.route);
+    else onClose();
   };
 
   return (

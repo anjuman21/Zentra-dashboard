@@ -1,4 +1,4 @@
-/* Zentra — Home page. Measurements follow the Figma frame (1440 × 1024). */
+/* Zentra — Home and Portfolio pages. Measurements follow the Figma frames (1440 × 1024). */
 
 :root {
   --page: #f8f8f8;
@@ -51,6 +51,10 @@
   --primary-shadow: 1.5px 4px 5px rgba(97, 74, 226, 0.25), inset 0 -4px 14px rgba(0, 0, 0, 0.25),
     inset 0 4px 14px rgba(255, 255, 255, 0.25);
   --primary-border: #ffffff;
+  --tick-active: #4a4a4a;
+  --text-head: #8c8c8c;
+  --success-strong: #3f9c77;
+  --tooltip: #ffffff;
   color-scheme: light;
 }
 
@@ -98,6 +102,10 @@
   --dock: rgba(26, 26, 26, 0.85);
   --mono-filter: invert(1);
   --primary-border: rgba(255, 255, 255, 0.35);
+  --tick-active: #bababa;
+  --text-head: #8c8c8c;
+  --success-strong: #48b187;
+  --tooltip: #262626;
   color-scheme: dark;
 }
 
@@ -130,6 +138,7 @@ body {
 }
 
 p,
+h1,
 h2 {
   margin: 0;
 }
@@ -1915,5 +1924,878 @@ input:focus-visible {
   .kpi:nth-of-type(4),
   .kpis__divider:nth-of-type(3) {
     display: none;
+  }
+}
+
+/* ═════════════ Portfolio page (Figma 53:2964, mobile 156:10171) ═════════════ */
+
+.portfolio {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 8px 13px 8px 8px;
+}
+
+.pf-content {
+  padding: 0;
+}
+
+.pf-main {
+  gap: 8px;
+}
+
+/* Header */
+
+.pf-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-right: 3px;
+}
+
+.pf-header__text {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.pf-header__title {
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.24px;
+  color: var(--text-1);
+  white-space: nowrap;
+}
+
+.pf-header__sub {
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: -0.14px;
+  color: var(--text-2);
+}
+
+.pf-mobile-only {
+  display: none;
+}
+
+.pf-header__actions {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.pf-add {
+  gap: 8px;
+  padding: 8px 12px 8px 16px;
+  font-weight: 500;
+  letter-spacing: -0.42px;
+  white-space: nowrap;
+}
+
+.pf-export {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 8px 8px 14px;
+  border-radius: 8px;
+  background: var(--chip-strong);
+  box-shadow: 0 4px 2px rgba(0, 0, 0, 0.03);
+  font-size: 14px;
+  letter-spacing: -0.42px;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.pf-export:hover,
+.pf-square:hover {
+  filter: brightness(0.98);
+}
+
+/* Overview card: stats + portfolio chart */
+
+.pf-overview {
+  height: 473px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 8px;
+  overflow: hidden;
+}
+
+.pf-stats {
+  display: flex;
+  align-items: stretch;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--kpi-bg);
+  box-shadow: var(--kpi-shadow);
+}
+
+.pf-stat {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 12px;
+  border-left: 1px solid var(--kpi-divider);
+}
+
+.pf-stat:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.pf-stat:last-child {
+  padding-right: 0;
+}
+
+.pf-stat__text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pf-stat__spark {
+  display: block;
+  width: 100%;
+  max-width: 183px;
+  height: 36px;
+}
+
+.pf-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pf-chart__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.pf-chart__title {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.pf-chart__label {
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: -0.14px;
+  color: var(--text-2);
+}
+
+.pf-chart__amount {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.pf-chart__value {
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.24px;
+  color: var(--text-1);
+}
+
+.pf-chart__change {
+  font-size: 16px;
+  letter-spacing: -0.48px;
+}
+
+/* Plot: bars (211) + 16 gap + date ruler (35). Origin = top of the bars. */
+.pf-plot {
+  --sx: 1;
+  position: relative;
+  height: 262px;
+}
+
+.pf-plot__layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 840px;
+  height: 211px;
+  transform: scaleX(var(--sx));
+  transform-origin: left top;
+  pointer-events: none;
+}
+
+.pf-plot__layer img {
+  position: absolute;
+  display: block;
+  max-width: none;
+}
+
+.pf-plot__bars {
+  left: 0;
+  top: 0;
+}
+
+.pf-plot__line--1 {
+  left: -0.28px;
+  top: 98.83px;
+}
+
+.pf-plot__line--2 {
+  left: 278.01px;
+  top: 97.41px;
+}
+
+.pf-plot__line--3 {
+  left: 556.21px;
+  top: 35.28px;
+}
+
+.pf-marker {
+  position: absolute;
+  z-index: 1;
+}
+
+.pf-tip {
+  position: absolute;
+  z-index: 2;
+  top: var(--tip-top);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--tooltip);
+  box-shadow: 3px 6px 6px rgba(0, 0, 0, 0.16);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.pf-tip__actual {
+  letter-spacing: -0.36px;
+  color: var(--text-1);
+}
+
+.pf-tip__potential {
+  font-weight: 300;
+  color: var(--text-2);
+}
+
+.pf-dates {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 227px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pf-dates__labels .is-active {
+  font-weight: 500;
+  color: var(--text-1);
+}
+
+.pf-dates__ticks span.is-active {
+  background: var(--tick-active);
+}
+
+/* Selected range (Jun–Aug) sits on top of the short ticks. */
+.pf-range-line {
+  position: absolute;
+  top: 253px;
+  left: calc(291px * var(--sx));
+  width: calc(265px * var(--sx));
+  height: 1px;
+  background: var(--tick-active);
+}
+
+/* Your Assets */
+
+.pf-assets {
+  height: 390px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 16px 0;
+  overflow: hidden;
+}
+
+.pf-table-scroll {
+  flex: 1 0 0;
+  min-height: 1px;
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.pf-table {
+  flex: 1 0 0;
+  min-width: 720px;
+  display: flex;
+  flex-direction: column;
+}
+
+.pf-row {
+  display: grid;
+  grid-template-columns: 142px 191px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) 48px;
+  grid-template-rows: minmax(0, 1fr);
+  flex: 1 0 0;
+  min-height: 1px;
+  border-bottom: 1px solid var(--row-border);
+}
+
+.pf-row.is-last {
+  border-bottom: 0;
+}
+
+.pf-row--head {
+  flex: none;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: -0.28px;
+  color: var(--text-head);
+  white-space: nowrap;
+}
+
+.pf-row--head span {
+  padding: 8px 16px;
+}
+
+.pf-row--head span:nth-child(1) {
+  padding: 8px 0;
+}
+
+.pf-row--head span:nth-child(2) {
+  padding: 8px;
+}
+
+.pf-rows {
+  flex: 1 0 0;
+  min-height: 1px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Rows share the height Figma gives them; content is centred in each cell. */
+.pf-cell {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  font-size: 14px;
+  color: var(--text-1);
+  white-space: nowrap;
+}
+
+.pf-cell--asset {
+  gap: 8px;
+  padding: 0;
+}
+
+.pf-cell--asset img {
+  flex-shrink: 0;
+}
+
+.pf-two {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pf-two__sub {
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: -0.12px;
+  color: var(--text-2);
+}
+
+.pf-cell--change {
+  padding: 0 16px;
+}
+
+.pf-cell--pnl {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 16px;
+  letter-spacing: -0.14px;
+}
+
+.pf-cell__pct {
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: -0.12px;
+}
+
+.pf-cell.is-up {
+  color: var(--success-strong);
+}
+
+.pf-cell.is-up .pf-cell__pct {
+  color: var(--success);
+}
+
+.pf-cell.is-down {
+  color: var(--error);
+}
+
+.pf-cell--action {
+  justify-content: flex-end;
+}
+
+/* Right column */
+
+.pf-side {
+  gap: 8px;
+}
+
+.pf-card__title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+.pf-square {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--chip-strong);
+  box-shadow: 0 4px 2px rgba(0, 0, 0, 0.03);
+}
+
+.pf-alloc {
+  position: relative;
+  height: 276px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 16px 48px;
+  overflow: hidden;
+}
+
+.pf-alloc__list {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 24px;
+}
+
+.pf-alloc__col {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pf-alloc__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  letter-spacing: -0.12px;
+  white-space: nowrap;
+}
+
+.pf-alloc__key {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 300;
+  color: var(--text-2);
+}
+
+.pf-alloc__value {
+  font-weight: 500;
+}
+
+.pf-gauge {
+  position: absolute;
+  left: 50%;
+  top: 152.77px;
+  width: 269px;
+  height: 124px;
+  transform: translateX(calc(-50% + 0.27px));
+  pointer-events: none;
+}
+
+.pf-gauge img {
+  position: absolute;
+  display: block;
+  max-width: none;
+}
+
+.pf-gauge__arcs {
+  left: 0;
+  top: 0;
+}
+
+.pf-gauge__ring {
+  left: 35.5px;
+  top: 35.23px;
+}
+
+:root[data-theme="dark"] .pf-gauge__ring {
+  opacity: 0.25;
+}
+
+.pf-gauge__total {
+  position: absolute;
+  left: calc(50% + 0.5px);
+  top: 216px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.pf-gauge__label {
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: -0.12px;
+  color: var(--text-2);
+}
+
+.pf-gauge__value {
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+  color: var(--text-1);
+}
+
+.pf-holdings {
+  height: 301px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 16px 0;
+  overflow: hidden;
+}
+
+.pf-hold {
+  flex: 1 0 0;
+  min-height: 1px;
+  display: flex;
+  flex-direction: column;
+}
+
+.pf-hold__row {
+  flex: 1 0 0;
+  min-height: 1px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 93px;
+  align-items: center;
+  border-bottom: 1px solid var(--row-border);
+  font-size: 12px;
+  color: var(--text-1);
+  white-space: nowrap;
+}
+
+.pf-hold__row.is-last {
+  border-bottom: 0;
+}
+
+.pf-hold__row > span:nth-child(2) {
+  padding: 0 8px;
+}
+
+.pf-hold__row > span:nth-child(3) {
+  padding: 0 8px 0 16px;
+  text-align: right;
+}
+
+.pf-hold__row--head {
+  flex: none;
+  padding: 8px 0;
+  border-bottom: 0;
+  font-weight: 300;
+  letter-spacing: -0.24px;
+  color: var(--text-4);
+}
+
+.pf-hold__asset {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pf-perf {
+  height: 278px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.pf-perf__range {
+  height: 30px;
+  padding: 6px 5px 6px 10px;
+}
+
+.pf-perf__grid {
+  height: 148px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.pf-metric {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px 12px 12px;
+  border-radius: 16px;
+  background: var(--glass);
+  box-shadow: var(--kpi-shadow);
+  overflow: hidden;
+}
+
+.pf-metric__icon {
+  flex: 0 0 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.pf-metric__text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.pf-metric__label {
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: -0.24px;
+  color: var(--text-3);
+}
+
+.pf-metric__value {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.32px;
+  color: var(--text-1);
+}
+
+.pf-metric__value.is-positive {
+  color: var(--success-strong);
+}
+
+.pf-perf__cta {
+  width: 100%;
+  height: 36px;
+  padding: 8px;
+  flex-shrink: 0;
+}
+
+/* ───────────── Portfolio responsive ───────────── */
+
+@media (max-width: 1279px) {
+  .portfolio {
+    padding-right: 8px;
+  }
+
+  .pf-header {
+    margin-right: 0;
+  }
+
+  .pf-side > .card {
+    flex: 1 1 300px;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 960px) {
+  .pf-stat {
+    padding: 0 10px;
+  }
+
+  .pf-stat .kpi__value {
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+}
+
+/* Phone — follows "Portfolio page (mobile)". */
+@media (max-width: 767px) {
+  .portfolio {
+    gap: 16px;
+    padding: 24px 16px 140px;
+  }
+
+  .pf-header {
+    align-items: flex-start;
+  }
+
+  .pf-header__text {
+    gap: 8px;
+  }
+
+  .pf-header__title {
+    font-size: 20px;
+    letter-spacing: -0.2px;
+  }
+
+  .pf-header__sub {
+    font-size: 12px;
+    letter-spacing: -0.12px;
+  }
+
+  .pf-desktop-only {
+    display: none;
+  }
+
+  .pf-mobile-only {
+    display: inline;
+  }
+
+  .pf-header__actions {
+    gap: 8px;
+  }
+
+  .pf-btn-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .pf-add,
+  .pf-header__actions .pf-export {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+  }
+
+  .pf-overview {
+    height: auto;
+    gap: 16px;
+    padding: 8px;
+  }
+
+  /* 2 × 2: Profit, Best / Balance, 24h */
+  .pf-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 8px 16px 16px;
+  }
+
+  .pf-stat {
+    padding: 8px 0 0 12px;
+  }
+
+  .pf-stat--profit {
+    order: 1;
+  }
+
+  .pf-stat--best {
+    order: 2;
+  }
+
+  .pf-stat--balance {
+    order: 3;
+  }
+
+  .pf-stat--change {
+    order: 4;
+  }
+
+  .pf-stat--profit,
+  .pf-stat--balance {
+    padding: 8px 12px 0 0;
+    border-left: 0;
+  }
+
+  .pf-stat--best {
+    border-left: 1px solid var(--kpi-divider);
+  }
+
+  .pf-stat--profit,
+  .pf-stat--best {
+    border-bottom: 1px solid var(--row-border);
+  }
+
+  .pf-stat__number {
+    font-size: 14px;
+    letter-spacing: -0.28px;
+  }
+
+  .pf-stat .kpi__value {
+    flex-wrap: nowrap;
+  }
+
+  .pf-stat__spark {
+    max-width: none;
+  }
+
+  .pf-chart__label {
+    font-size: 12px;
+    letter-spacing: -0.12px;
+  }
+
+  .pf-chart__value {
+    font-size: 18px;
+    letter-spacing: -0.18px;
+  }
+
+  .pf-chart__change {
+    font-size: 14px;
+    letter-spacing: -0.42px;
+  }
+
+  .pf-plot {
+    margin: 0 4.5px;
+  }
+
+  .pf-tip {
+    top: var(--tip-top-m);
+  }
+
+  .pf-assets {
+    height: 452px;
+  }
+
+  .pf-side {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pf-side > .card {
+    width: 100%;
+    flex: none;
+  }
+}
+
+@media (max-width: 374px) {
+  .pf-stat .kpi__value {
+    flex-wrap: wrap;
+  }
+
+  .pf-tip {
+    font-size: 11px;
   }
 }

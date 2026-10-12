@@ -44,9 +44,10 @@ export const icons = {
   noaOrb: a("noa-orb.png"),
 };
 
+// `route` links an item to a page; `activeIcon` is the white glyph shown on the purple pill.
 export const mainMenu = [
-  { label: "Overview", icon: a("widgets.svg") },
-  { label: "Portfolio", icon: a("assignment.svg") },
+  { label: "Overview", route: "overview", icon: a("widgets-grey.svg"), activeIcon: a("widgets.svg") },
+  { label: "Portfolio", route: "portfolio", icon: a("assignment.svg"), activeIcon: a("portfolio-active.svg") },
   { label: "Markets", icon: a("insert-chart.svg") },
   { label: "Trade", icon: a("repeat.svg") },
   { label: "Analytics", icon: a("finance-mode.svg") },
@@ -149,8 +150,8 @@ export const watchlist = [
 export const convertTabs = ["Buy", "Sell", "Swap", "Convert"];
 
 export const mobileNav = [
-  { label: "Home", icon: a("m-home.svg") },
-  { label: "Portfolio", icon: a("m-portfolio.svg") },
+  { label: "Home", route: "overview", icon: a("m-home-grey.svg"), activeIcon: a("m-home.svg") },
+  { label: "Portfolio", route: "portfolio", icon: a("m-portfolio.svg"), activeIcon: a("m-portfolio-active.svg") },
   { label: "swap", icon: a("m-swap.svg") },
   { label: "Markets", icon: a("m-markets.svg") },
   { label: "Trade", icon: a("m-trade.svg") },
