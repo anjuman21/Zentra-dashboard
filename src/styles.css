@@ -250,7 +250,9 @@ input:focus-visible {
 
 .app {
   display: flex;
-  min-height: 100vh;
+  min-height: var(--app-h, 100vh);
+  max-width: 2240px;
+  margin: 0 auto;
 }
 
 .main-area {
@@ -293,7 +295,7 @@ input:focus-visible {
   top: 0;
   flex: 0 0 255px;
   width: 255px;
-  height: 100vh;
+  height: var(--app-h, 100vh);
   min-height: 0;
   overflow-y: auto;
   scrollbar-width: none;
@@ -2987,5 +2989,54 @@ input:focus-visible {
     font-weight: 500;
     letter-spacing: -0.42px;
     color: var(--error);
+  }
+}
+
+/* ═════════════ Big screens ═════════════ */
+
+/* When the screen is taller than the content, the last card in each column
+   grows so the page fills the height instead of leaving an empty band. */
+@media (min-width: 1280px) {
+  .main-area {
+    display: flex;
+    flex-direction: column;
+    min-height: var(--app-h, 100vh);
+  }
+
+  .main-area > .content,
+  .portfolio,
+  .pf-content {
+    flex: 1 0 auto;
+  }
+
+  .content {
+    align-items: stretch;
+  }
+
+  .right-col {
+    align-self: start;
+  }
+
+  .pf-side {
+    align-self: stretch;
+  }
+
+  .tx-card,
+  .pf-assets,
+  .pf-holdings {
+    flex: 1 0 auto;
+    height: auto;
+  }
+
+  .tx-card {
+    min-height: 452px;
+  }
+
+  .pf-assets {
+    min-height: 390px;
+  }
+
+  .pf-holdings {
+    min-height: 301px;
   }
 }
