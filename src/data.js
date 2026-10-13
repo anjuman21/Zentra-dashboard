@@ -52,16 +52,16 @@ export const mainMenu = [
   { label: "Overview", route: "overview", icon: a("widgets-grey.svg"), activeIcon: a("widgets.svg") },
   { label: "Portfolio", route: "portfolio", icon: a("assignment.svg"), activeIcon: a("portfolio-active.svg") },
   { label: "Markets", route: "markets", icon: a("insert-chart.svg") },
-  { label: "Trade", icon: a("repeat.svg") },
-  { label: "Analytics", icon: a("finance-mode.svg") },
-  { label: "History", icon: a("history.svg") },
+  { label: "Trade", route: "trade", icon: a("repeat.svg") },
+  { label: "Analytics", route: "analytics", icon: a("finance-mode.svg") },
+  { label: "History", route: "history", icon: a("history.svg") },
 ];
 
 export const financeOps = [
-  { label: "Staking", icon: a("app-badging.svg") },
-  { label: "Yield Farming", icon: a("filter-tilt-shift.svg") },
-  { label: "Automations", icon: a("conversion-path.svg") },
-  { label: "Alerts", icon: a("notifications.svg") },
+  { label: "Staking", route: "staking", icon: a("app-badging.svg") },
+  { label: "Yield Farming", route: "yield", icon: a("filter-tilt-shift.svg") },
+  { label: "Automations", icon: a("conversion-path.svg"), route: "automations" },
+  { label: "Alerts", icon: a("notifications.svg"), route: "alerts" },
 ];
 
 export const footerLinks = [
@@ -157,5 +157,5 @@ export const mobileNav = [
   { label: "Portfolio", route: "portfolio", icon: a("m-portfolio.svg"), activeIcon: a("m-portfolio-active.svg") },
   { label: "swap", icon: a("m-swap.svg") },
   { label: "Markets", route: "markets", icon: a("m-markets.svg"), activeIcon: a("m-markets-active.svg") },
-  { label: "Trade", icon: a("m-trade.svg") },
+  { label: "Trade", route: "trade", icon: a("m-trade.svg"), activeIcon: a("m-trade-active.svg") },
 ];

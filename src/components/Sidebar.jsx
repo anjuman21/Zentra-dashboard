@@ -52,17 +52,18 @@ function SetupCard() {
 }
 
 export default function Sidebar({ page, onNavigate, open, onClose, theme, onToggleTheme }) {
-  const routed = mainMenu.find((m) => m.route === page);
-  const [active, setActive] = useState(routed ? routed.label : "Overview");
+  const routed = [...mainMenu, ...financeOps].find((m) => m.route === page);
+  const [active, setActive] = useState(routed ? routed.label : page === "ai" ? null : "Overview");
   const dark = theme === "dark";
 
   // Routed items follow the URL; the rest only highlight locally.
   useEffect(() => {
     if (routed) setActive(routed.label);
-  }, [routed]);
+    else if (page === "ai") setActive(null);
+  }, [routed, page]);
 
   const select = (label) => {
-    const item = mainMenu.find((m) => m.label === label);
+    const item = [...mainMenu, ...financeOps].find((m) => m.label === label);
     setActive(label);
     if (item && item.route) onNavigate(item.route);
     else onClose();
@@ -84,7 +85,12 @@ export default function Sidebar({ page, onNavigate, open, onClose, theme, onTogg
         <div className="ask-ai-wrap">
           <div className="ask-ai">
             <img className="ask-ai__glow" src={icons.askAiGlow} alt="" />
-            <button type="button" className="ask-ai__bar">
+            <button
+              type="button"
+              className={`ask-ai__bar${page === "ai" ? " is-active" : ""}`}
+              aria-current={page === "ai" ? "page" : undefined}
+              onClick={() => onNavigate("ai")}
+            >
               <span className="ask-ai__label">
                 <img className="mono" src={icons.stars} alt="" width="18" height="18" />
                 <span>Ask AI</span>

@@ -51,10 +51,11 @@ function Header() {
   );
 }
 
-function Stats() {
+// Four-up KPI strip with sparklines; other pages pass their own items.
+export function Stats({ items = marketStats }) {
   return (
     <div className="pf-stats mk-stats">
-      {marketStats.map((s) => (
+      {items.map((s) => (
         <div key={s.label} className="pf-stat">
           <div className="pf-stat__text">
             <p className="kpi__label">{s.label}</p>
@@ -149,7 +150,7 @@ function CoinTable({ rows }) {
   );
 }
 
-function Pagination({ total }) {
+export function Pagination({ total }) {
   const [page, setPage] = useState(1);
   const [sizeIndex, setSizeIndex] = useState(0);
   const size = PAGE_SIZES[sizeIndex];

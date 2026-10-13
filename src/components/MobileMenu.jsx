@@ -10,8 +10,11 @@ const ITEMS = [
   ...financeOps,
 ];
 
-export default function MobileMenu({ open, onClose, theme, onToggleTheme }) {
-  const [active, setActive] = useState(null);
+export default function MobileMenu({ page, onNavigate, open, onClose, theme, onToggleTheme }) {
+  const routed = ITEMS.find((m) => m.route === page);
+  const [picked, setPicked] = useState(null);
+  // Routed sections follow the URL; the others only highlight locally.
+  const active = routed ? routed.label : picked;
   const dark = theme === "dark";
 
   useEffect(() => {
@@ -26,8 +29,14 @@ export default function MobileMenu({ open, onClose, theme, onToggleTheme }) {
   }, [open, onClose]);
 
   const select = (label) => {
-    setActive(label);
-    onClose();
+    const item = ITEMS.find((m) => m.label === label);
+    if (item && item.route) {
+      setPicked(null);
+      onNavigate(item.route);
+    } else {
+      setPicked(label);
+      onClose();
+    }
   };
 
   return (
