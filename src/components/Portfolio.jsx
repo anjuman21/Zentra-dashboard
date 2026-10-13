@@ -232,7 +232,7 @@ function YourAssets() {
   );
 }
 
-function CardTitle({ title, children }) {
+export function CardTitle({ title, children }) {
   return (
     <div className="pf-card__title">
       <h2 className="card-title">{title}</h2>
@@ -245,10 +245,10 @@ function CardTitle({ title, children }) {
   );
 }
 
-function Allocation() {
+export function Allocation({ title = "Assets Allocation" }) {
   return (
     <div className="card pf-alloc">
-      <CardTitle title="Assets Allocation" />
+      <CardTitle title={title} />
       <div className="pf-alloc__list">
         {allocation.map((col, i) => (
           <div key={i} className="pf-alloc__col">

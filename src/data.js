@@ -51,7 +51,7 @@ export const icons = {
 export const mainMenu = [
   { label: "Overview", route: "overview", icon: a("widgets-grey.svg"), activeIcon: a("widgets.svg") },
   { label: "Portfolio", route: "portfolio", icon: a("assignment.svg"), activeIcon: a("portfolio-active.svg") },
-  { label: "Markets", icon: a("insert-chart.svg") },
+  { label: "Markets", route: "markets", icon: a("insert-chart.svg") },
   { label: "Trade", icon: a("repeat.svg") },
   { label: "Analytics", icon: a("finance-mode.svg") },
   { label: "History", icon: a("history.svg") },
@@ -156,6 +156,6 @@ export const mobileNav = [
   { label: "Home", route: "overview", icon: a("m-home-grey.svg"), activeIcon: a("m-home.svg") },
   { label: "Portfolio", route: "portfolio", icon: a("m-portfolio.svg"), activeIcon: a("m-portfolio-active.svg") },
   { label: "swap", icon: a("m-swap.svg") },
-  { label: "Markets", icon: a("m-markets.svg") },
+  { label: "Markets", route: "markets", icon: a("m-markets.svg"), activeIcon: a("m-markets-active.svg") },
   { label: "Trade", icon: a("m-trade.svg") },
 ];
