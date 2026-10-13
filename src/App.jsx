@@ -12,6 +12,10 @@ import Trade from "./components/Trade";
 import Analytics from "./components/Analytics";
 import History from "./components/History";
 import Stake from "./components/Stake";
+import YieldFarming from "./components/YieldFarming";
+import Automations from "./components/Automations";
+import Alerts from "./components/Alerts";
+import AiAssistant from "./components/AiAssistant";
 
 function readTheme() {
   try {
@@ -22,8 +26,8 @@ function readTheme() {
 }
 
 // Hash routes keep deep links working on static hosting (Vercel) without rewrites.
-const PAGES = ["portfolio", "markets", "trade", "analytics", "history", "staking"];
-const TITLES = { overview: "Home", portfolio: "Portfolio", markets: "Markets", trade: "Trade", analytics: "Analytics", history: "History", staking: "Stake" };
+const PAGES = ["portfolio", "markets", "trade", "analytics", "history", "staking", "yield", "automations", "alerts", "ai"];
+const TITLES = { overview: "Home", portfolio: "Portfolio", markets: "Markets", trade: "Trade", analytics: "Analytics", history: "History", staking: "Stake", yield: "Yield Farming", automations: "Automations", alerts: "Alerts", ai: "Ask Noa" };
 const readPage = () => {
   const route = window.location.hash.replace(/^#\//, "");
   return PAGES.includes(route) ? route : "overview";
@@ -65,8 +69,20 @@ export default function App() {
 
   const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
 
+  // ⌘D / Ctrl+D opens Noa, as the shortcut hint on the Ask AI bar promises.
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "d") {
+        e.preventDefault();
+        window.location.hash = "#/ai";
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
   return (
-    <div className="app">
+    <div className={`app${page === "ai" ? " app--ai" : ""}`}>
       <Sidebar page={page} onNavigate={navigate} open={drawerOpen} onClose={() => setDrawerOpen(false)} theme={theme} onToggleTheme={toggleTheme} />
       {drawerOpen && <div className="scrim" onClick={() => setDrawerOpen(false)} />}
 
@@ -86,6 +102,14 @@ export default function App() {
           <History />
         ) : page === "staking" ? (
           <Stake />
+        ) : page === "yield" ? (
+          <YieldFarming />
+        ) : page === "automations" ? (
+          <Automations />
+        ) : page === "alerts" ? (
+          <Alerts />
+        ) : page === "ai" ? (
+          <AiAssistant onBack={() => navigate("overview")} />
         ) : (
           <main className="content">
             <section className="main-col">

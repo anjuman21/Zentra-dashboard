@@ -18,6 +18,10 @@ React + Vite build of the Zentra dashboard from Figma (`zentra (Copy)`).
 - **Analytics** (`#/analytics`), section `172:17749`: KPIs, portfolio performance chart, PnL bars, a trades-by-time heatmap, performance and top assets.
 - **History** (`#/history`), section `172:17750`: transaction table with type/asset/status filters and pagination, quick stats, balance trend and top assets.
 - **Stake** (`#/staking`), section `172:17751`: staking assets with search and stake buttons, stake portfolio, rewards and recent activity.
+- **Yield Farming** (`#/yield`), section `172:17753`: stats, farming positions, featured pools with "Add Liquidity", your-yield chart, pending rewards with "Claim All" and farming activity.
+- **Automations** (`#/automations`), section `172:17754`: stats, the automations table (click a status pill to pause or resume a rule, "Sort by" cycles the order), automation health gauge and recent executions.
+- **Alerts** (`#/alerts`), section `172:17755`: alert feed with list tabs and type/asset/status filters (clicking an unread alert marks it read), quick actions, alert summary and recent alerts.
+- **Ask Noa** (`#/ai`), section `172:17756`: the AI assistant. Opened from the sidebar "Ask AI" bar, ⌘D / Ctrl+D, or "Ask Noa" on phones. Typing a question, a suggestion or a recent chat starts a demo conversation with canned answers. On phones Noa takes the whole screen with its own back button.
 
 Sidebar and bottom-nav links switch pages through the URL hash, so deep links work on static hosting.
 
@@ -48,6 +52,6 @@ Import the repository in Vercel. It detects the Vite preset automatically (build
 
 ## Structure
 
-- `src/data.js` plus one data file per page (`portfolioData`, `marketsData`, `tradeData`, `analyticsData`, `historyData`, `stakeData`): content, asset paths and chart geometry from the design
-- `src/components/`: Sidebar, Navbar (+ mobile top bar), MarketTrends, Transactions, RightPanel (Convert, Watchlist, Registration), Portfolio, Markets, Trade, Analytics, History, Stake, MobileNav, MobileMenu
+- `src/data.js` plus one data file per page (`portfolioData`, `marketsData`, `tradeData`, `analyticsData`, `historyData`, `stakeData`, `yieldData`, `autoData`, `alertData`, `aiData`): content, asset paths and chart geometry from the design
+- `src/components/`: Sidebar, Navbar (+ mobile top bar), MarketTrends, Transactions, RightPanel (Convert, Watchlist, Registration), Portfolio, Markets, Trade, Analytics, History, Stake, YieldFarming, Automations, Alerts, AiAssistant, MobileNav, MobileMenu
 - `src/styles.css`: design tokens (light/dark), layout and breakpoints (1280 / 1024 / 860 / 768)

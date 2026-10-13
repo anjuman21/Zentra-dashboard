@@ -59,9 +59,9 @@ export const mainMenu = [
 
 export const financeOps = [
   { label: "Staking", route: "staking", icon: a("app-badging.svg") },
-  { label: "Yield Farming", icon: a("filter-tilt-shift.svg") },
-  { label: "Automations", icon: a("conversion-path.svg") },
-  { label: "Alerts", icon: a("notifications.svg") },
+  { label: "Yield Farming", route: "yield", icon: a("filter-tilt-shift.svg") },
+  { label: "Automations", icon: a("conversion-path.svg"), route: "automations" },
+  { label: "Alerts", icon: a("notifications.svg"), route: "alerts" },
 ];
 
 export const footerLinks = [

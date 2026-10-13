@@ -51,10 +51,11 @@ function Header() {
   );
 }
 
-export function Stats() {
+// Four-up KPI strip with sparklines; other pages pass their own items.
+export function Stats({ items = marketStats }) {
   return (
     <div className="pf-stats mk-stats">
-      {marketStats.map((s) => (
+      {items.map((s) => (
         <div key={s.label} className="pf-stat">
           <div className="pf-stat__text">
             <p className="kpi__label">{s.label}</p>

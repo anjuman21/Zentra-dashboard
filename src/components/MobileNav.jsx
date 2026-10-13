@@ -4,7 +4,7 @@ import { icons, mobileNav } from "../data";
 export default function MobileNav({ page, onNavigate }) {
   return (
     <div className="m-dock">
-      <button type="button" className="ask-noa">
+      <button type="button" className="ask-noa" onClick={() => onNavigate("ai")}>
         <img src={icons.noaOrb} alt="" width="32" height="32" />
         <span>Ask Noa</span>
       </button>
