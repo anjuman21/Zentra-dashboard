@@ -7,6 +7,7 @@ import { ConvertCard, Watchlist, Registration } from "./components/RightPanel";
 import MobileNav from "./components/MobileNav";
 import MobileMenu from "./components/MobileMenu";
 import Portfolio from "./components/Portfolio";
+import Markets from "./components/Markets";
 
 function readTheme() {
   try {
@@ -17,7 +18,12 @@ function readTheme() {
 }
 
 // Hash routes keep deep links working on static hosting (Vercel) without rewrites.
-const readPage = () => (window.location.hash === "#/portfolio" ? "portfolio" : "overview");
+const PAGES = ["portfolio", "markets"];
+const TITLES = { overview: "Home", portfolio: "Portfolio", markets: "Markets" };
+const readPage = () => {
+  const route = window.location.hash.replace(/^#\//, "");
+  return PAGES.includes(route) ? route : "overview";
+};
 
 export default function App() {
   const [theme, setTheme] = useState(readTheme);
@@ -43,7 +49,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    document.title = page === "portfolio" ? "Zentra — Portfolio" : "Zentra — Home";
+    document.title = `Zentra — ${TITLES[page]}`;
   }, [page]);
 
   const navigate = (route) => {
@@ -66,6 +72,8 @@ export default function App() {
 
         {page === "portfolio" ? (
           <Portfolio />
+        ) : page === "markets" ? (
+          <Markets />
         ) : (
           <main className="content">
             <section className="main-col">

@@ -10,6 +10,10 @@ React + Vite build of the Zentra dashboard from Figma (`zentra (Copy)`).
   - Mobile `156:10171` (402 px).
   - Below 1280 px the right column wraps under the main column. Below 768 px the stats become a 2 × 2 grid, the header buttons become icon-only, and the assets table scrolls sideways.
 
+- **Markets** (`#/markets`), section `172:17747`
+  - Desktop `78:1922` (1440 × 1024), mobile `156:10792` (402 px).
+  - Tabs filter the coin list; pagination and rows-per-page are interactive. On phones the stats become 2 × 2, the tabs scroll sideways and the coin table scrolls horizontally.
+
 Sidebar and bottom-nav links switch pages through the URL hash, so deep links work on static hosting.
 
 ## Home page details
@@ -39,6 +43,6 @@ Import the repository in Vercel. It detects the Vite preset automatically (build
 
 ## Structure
 
-- `src/data.js` and `src/portfolioData.js`: content, asset paths and chart geometry from the design
-- `src/components/`: Sidebar, Navbar (+ mobile top bar), MarketTrends, Transactions, RightPanel (Convert, Watchlist, Registration), Portfolio, MobileNav
+- `src/data.js`, `src/portfolioData.js` and `src/marketsData.js`: content, asset paths and chart geometry from the design
+- `src/components/`: Sidebar, Navbar (+ mobile top bar), MarketTrends, Transactions, RightPanel (Convert, Watchlist, Registration), Portfolio, Markets, MobileNav, MobileMenu
 - `src/styles.css`: design tokens (light/dark), layout and breakpoints (1280 / 1024 / 860 / 768)

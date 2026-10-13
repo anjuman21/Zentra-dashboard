@@ -3040,3 +3040,442 @@ input:focus-visible {
     min-height: 301px;
   }
 }
+
+/* ═════════════ Markets page (Figma 78:1922, mobile 156:10792) ═════════════ */
+
+.mk-col {
+  gap: 14px;
+}
+
+.mk-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 8px;
+}
+
+.mk-body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 0 8px;
+}
+
+.mk-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.mk-tabs {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  box-shadow: inset 0 -0.5px 0 #bababa;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.mk-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.mk-tab {
+  flex-shrink: 0;
+  height: 34px;
+  padding: 8px 16px;
+  border-bottom: 1.5px solid transparent;
+  font-size: 14px;
+  letter-spacing: -0.14px;
+  color: var(--text-2);
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.mk-tab:first-child {
+  padding-left: 0;
+}
+
+.mk-tab:hover {
+  color: var(--text-1);
+}
+
+.mk-tab.is-active {
+  border-bottom-color: var(--text-1);
+  font-weight: 500;
+  color: var(--text-1);
+}
+
+.mk-filters {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.mk-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 32px;
+  padding: 8px 8px 8px 10px;
+  border-radius: 8px;
+  background: var(--chip-strong);
+  font-size: 14px;
+  letter-spacing: -0.42px;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.mk-table-scroll {
+  flex: none;
+  height: 594px;
+}
+
+.mk-table {
+  flex: 1 0 0;
+  min-width: 720px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 49px rows fill the table at 10 coins; shorter lists stop at 64px per row. */
+.mk-row {
+  display: grid;
+  grid-template-columns: 153px 127px repeat(4, minmax(0, 1fr)) 48px;
+  grid-template-rows: minmax(0, 1fr);
+  flex: 1 0 0;
+  min-height: 1px;
+  max-height: 64px;
+  border-bottom: 1px solid var(--row-border);
+}
+
+.mk-row.is-last {
+  border-bottom: 0;
+}
+
+.mk-row--head {
+  flex: none;
+  max-height: none;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: -0.28px;
+  color: var(--text-head);
+  white-space: nowrap;
+}
+
+.mk-row--head span {
+  padding: 8px 16px 8px 8px;
+}
+
+.mk-row--head span:first-child {
+  padding: 8px 0;
+}
+
+.mk-rows {
+  flex: 1 0 0;
+  min-height: 1px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mk-cell {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  font-size: 14px;
+  color: var(--text-1);
+  white-space: nowrap;
+}
+
+.mk-cell--coin {
+  gap: 8px;
+  padding: 0;
+}
+
+.mk-cell--coin img {
+  flex-shrink: 0;
+}
+
+.mk-cell--change {
+  padding: 0 16px;
+  letter-spacing: -0.14px;
+}
+
+.mk-cell.is-up {
+  color: var(--success-strong);
+}
+
+.mk-cell.is-down {
+  color: var(--error);
+}
+
+.mk-cell--action {
+  justify-content: flex-end;
+}
+
+.mk-empty {
+  padding: 24px 0;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text-2);
+}
+
+.mk-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 8px 8px;
+}
+
+.mk-pagination__text {
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: -0.28px;
+  color: var(--text-head);
+  white-space: nowrap;
+}
+
+.mk-pages {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mk-page {
+  min-width: 33px;
+  height: 33px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--chip-strong);
+  font-size: 14px;
+  letter-spacing: -0.42px;
+  color: var(--text-2);
+}
+
+.mk-page:disabled {
+  background: var(--page);
+  cursor: default;
+}
+
+.mk-page:disabled img {
+  opacity: 0.6;
+}
+
+.mk-page--gap {
+  background: transparent;
+  box-shadow: none;
+}
+
+.mk-page.is-active {
+  min-width: 34px;
+  border: 1px solid var(--primary-border);
+  background: var(--primary-gradient);
+  box-shadow: var(--primary-shadow);
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.mk-page-size {
+  height: 33px;
+  padding: 8px;
+}
+
+/* Fear & Greed */
+
+.mk-fg {
+  position: relative;
+  height: 217px;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.mk-fg__gauge {
+  position: absolute;
+  left: calc(50% - 147px);
+  top: 83.08px;
+  display: block;
+  max-width: none;
+}
+
+:root[data-theme="dark"] .mk-fg__gauge {
+  filter: brightness(0.75);
+}
+
+.mk-fg__reading {
+  position: absolute;
+  left: calc(50% + 0.5px);
+  top: 120px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.mk-fg__value {
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -0.32px;
+  color: var(--text-1);
+}
+
+.mk-fg__label {
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: -0.12px;
+  color: var(--text-2);
+}
+
+.mk-fg__yesterday {
+  position: absolute;
+  left: calc(50% + 0.5px);
+  top: 194px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: -0.12px;
+  color: var(--text-head);
+  white-space: nowrap;
+}
+
+.mk-fg__yesterday-value {
+  font-weight: 400;
+  color: var(--m-menu-name);
+}
+
+/* Trending pairs reuse the Top Holdings list. */
+.pf-holdings.mk-trending {
+  height: 425px;
+}
+
+.mk-pair {
+  grid-template-columns: 97px minmax(0, 1fr) minmax(0, 1fr);
+}
+
+@media (min-width: 1280px) {
+  .mk-main {
+    flex: 1 0 auto;
+  }
+
+  .mk-body {
+    flex: 1 0 auto;
+  }
+
+  .mk-table-scroll {
+    flex: 1 0 594px;
+    height: auto;
+  }
+
+  .pf-holdings.mk-trending {
+    min-height: 425px;
+  }
+}
+
+@media (max-width: 960px) {
+  .mk-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mk-tabs {
+    max-width: 100%;
+  }
+}
+
+/* Phone — follows "Markets page (mobile)". */
+@media (max-width: 767px) {
+  .mk-main {
+    gap: 16px;
+  }
+
+  .pf-stats.mk-stats .pf-stat {
+    padding: 8px 0 0 12px;
+    border-left: 1px solid var(--kpi-divider);
+  }
+
+  .pf-stats.mk-stats .pf-stat:nth-child(odd) {
+    padding: 8px 12px 0 0;
+    border-left: 0;
+  }
+
+  .pf-stats.mk-stats .pf-stat:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--row-border);
+  }
+
+  .mk-body {
+    gap: 16px;
+  }
+
+  .mk-toolbar {
+    gap: 24px;
+  }
+
+  .mk-tab {
+    font-size: 13px;
+    letter-spacing: -0.13px;
+  }
+
+  .markets {
+    gap: 16px;
+  }
+
+  .mk-col {
+    gap: 16px;
+  }
+
+  .mk-table-scroll {
+    flex: none;
+    height: auto;
+    margin-right: -16px;
+    padding-right: 16px;
+  }
+
+  .mk-table {
+    min-width: 840px;
+  }
+
+  .mk-row {
+    grid-template-columns: 117px 79px 109px 113px 187px 187px 48px;
+  }
+
+  .mk-row--head span,
+  .mk-cell--change {
+    padding: 8px;
+  }
+
+  .mk-rows {
+    flex: none;
+    gap: 0;
+  }
+
+  .mk-row:not(.mk-row--head) {
+    flex: none;
+    height: 59px;
+  }
+
+  .mk-pagination {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .mk-pagination__text {
+    text-align: center;
+  }
+
+  .mk-pages {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
