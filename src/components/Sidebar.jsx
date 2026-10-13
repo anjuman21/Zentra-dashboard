@@ -52,7 +52,7 @@ function SetupCard() {
 }
 
 export default function Sidebar({ page, onNavigate, open, onClose, theme, onToggleTheme }) {
-  const routed = mainMenu.find((m) => m.route === page);
+  const routed = [...mainMenu, ...financeOps].find((m) => m.route === page);
   const [active, setActive] = useState(routed ? routed.label : "Overview");
   const dark = theme === "dark";
 
@@ -62,7 +62,7 @@ export default function Sidebar({ page, onNavigate, open, onClose, theme, onTogg
   }, [routed]);
 
   const select = (label) => {
-    const item = mainMenu.find((m) => m.label === label);
+    const item = [...mainMenu, ...financeOps].find((m) => m.label === label);
     setActive(label);
     if (item && item.route) onNavigate(item.route);
     else onClose();

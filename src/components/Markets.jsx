@@ -51,7 +51,7 @@ function Header() {
   );
 }
 
-function Stats() {
+export function Stats() {
   return (
     <div className="pf-stats mk-stats">
       {marketStats.map((s) => (
@@ -149,7 +149,7 @@ function CoinTable({ rows }) {
   );
 }
 
-function Pagination({ total }) {
+export function Pagination({ total }) {
   const [page, setPage] = useState(1);
   const [sizeIndex, setSizeIndex] = useState(0);
   const size = PAGE_SIZES[sizeIndex];

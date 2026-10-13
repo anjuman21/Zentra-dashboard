@@ -14,6 +14,11 @@ React + Vite build of the Zentra dashboard from Figma (`zentra (Copy)`).
   - Desktop `78:1922` (1440 × 1024), mobile `156:10792` (402 px).
   - Tabs filter the coin list; pagination and rows-per-page are interactive. On phones the stats become 2 × 2, the tabs scroll sideways and the coin table scrolls horizontally.
 
+- **Trade** (`#/trade`), section `172:17748`: pair header, price chart with switches and drawing tools, open orders, buy/sell form with a balance slider, and an order book.
+- **Analytics** (`#/analytics`), section `172:17749`: KPIs, portfolio performance chart, PnL bars, a trades-by-time heatmap, performance and top assets.
+- **History** (`#/history`), section `172:17750`: transaction table with type/asset/status filters and pagination, quick stats, balance trend and top assets.
+- **Stake** (`#/staking`), section `172:17751`: staking assets with search and stake buttons, stake portfolio, rewards and recent activity.
+
 Sidebar and bottom-nav links switch pages through the URL hash, so deep links work on static hosting.
 
 ## Home page details
@@ -43,6 +48,6 @@ Import the repository in Vercel. It detects the Vite preset automatically (build
 
 ## Structure
 
-- `src/data.js`, `src/portfolioData.js` and `src/marketsData.js`: content, asset paths and chart geometry from the design
-- `src/components/`: Sidebar, Navbar (+ mobile top bar), MarketTrends, Transactions, RightPanel (Convert, Watchlist, Registration), Portfolio, Markets, MobileNav, MobileMenu
+- `src/data.js` plus one data file per page (`portfolioData`, `marketsData`, `tradeData`, `analyticsData`, `historyData`, `stakeData`): content, asset paths and chart geometry from the design
+- `src/components/`: Sidebar, Navbar (+ mobile top bar), MarketTrends, Transactions, RightPanel (Convert, Watchlist, Registration), Portfolio, Markets, Trade, Analytics, History, Stake, MobileNav, MobileMenu
 - `src/styles.css`: design tokens (light/dark), layout and breakpoints (1280 / 1024 / 860 / 768)

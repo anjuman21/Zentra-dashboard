@@ -8,6 +8,10 @@ import MobileNav from "./components/MobileNav";
 import MobileMenu from "./components/MobileMenu";
 import Portfolio from "./components/Portfolio";
 import Markets from "./components/Markets";
+import Trade from "./components/Trade";
+import Analytics from "./components/Analytics";
+import History from "./components/History";
+import Stake from "./components/Stake";
 
 function readTheme() {
   try {
@@ -18,8 +22,8 @@ function readTheme() {
 }
 
 // Hash routes keep deep links working on static hosting (Vercel) without rewrites.
-const PAGES = ["portfolio", "markets"];
-const TITLES = { overview: "Home", portfolio: "Portfolio", markets: "Markets" };
+const PAGES = ["portfolio", "markets", "trade", "analytics", "history", "staking"];
+const TITLES = { overview: "Home", portfolio: "Portfolio", markets: "Markets", trade: "Trade", analytics: "Analytics", history: "History", staking: "Stake" };
 const readPage = () => {
   const route = window.location.hash.replace(/^#\//, "");
   return PAGES.includes(route) ? route : "overview";
@@ -74,6 +78,14 @@ export default function App() {
           <Portfolio />
         ) : page === "markets" ? (
           <Markets />
+        ) : page === "trade" ? (
+          <Trade />
+        ) : page === "analytics" ? (
+          <Analytics />
+        ) : page === "history" ? (
+          <History />
+        ) : page === "staking" ? (
+          <Stake />
         ) : (
           <main className="content">
             <section className="main-col">
@@ -90,7 +102,7 @@ export default function App() {
       </div>
 
       <MobileNav page={page} onNavigate={navigate} />
-      <MobileMenu open={drawerOpen} onClose={closeDrawer} theme={theme} onToggleTheme={toggleTheme} />
+      <MobileMenu page={page} onNavigate={navigate} open={drawerOpen} onClose={closeDrawer} theme={theme} onToggleTheme={toggleTheme} />
     </div>
   );
 }
