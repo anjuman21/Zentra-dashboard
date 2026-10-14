@@ -855,7 +855,12 @@ input:focus-visible {
   justify-content: space-between;
 }
 
+.chart__header {
+  gap: 12px;
+}
+
 .chart__title {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -863,8 +868,13 @@ input:focus-visible {
 
 .legend {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 32px;
+}
+
+.chart__header > .chip {
+  flex-shrink: 0;
 }
 
 .legend__item {
@@ -1052,7 +1062,8 @@ input:focus-visible {
 .tooltip {
   position: absolute;
   top: 30.4px;
-  left: calc(541px * var(--sx) - 174px);
+  /* Sits left of the cursor, but never past the chart's left edge on small phones. */
+  left: max(0px, calc(541px * var(--sx) - 174px));
   width: 161px;
   display: flex;
   flex-direction: column;
@@ -1855,10 +1866,25 @@ input:focus-visible {
     display: none;
   }
 
-  .tx-col--status,
-  .tx-col--rate,
+  /* Keep every column and let the table scroll sideways instead. */
+  .tx-table {
+    justify-content: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+  }
+
+  .tx-col--buy,
+  .tx-col--sell {
+    min-width: 172px;
+  }
+
+  .tx-col--status {
+    min-width: 200px;
+  }
+
   .tx-col--action {
-    display: none;
+    min-width: 48px;
   }
 }
 
@@ -1930,11 +1956,6 @@ input:focus-visible {
 
   .series__label {
     font-size: 13px;
-  }
-
-  .tooltip,
-  .series__dot {
-    display: none;
   }
 
   .graph-tools {
