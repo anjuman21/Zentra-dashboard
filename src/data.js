@@ -25,6 +25,7 @@ export const icons = {
   dotOrange: a("dot-orange.svg"),
   dotGrey: a("dot-grey.svg"),
   dotBlue: a("dot-blue.svg"),
+  mobileGraphLines: a("m-graph-lines.svg"),
   legendBlue: a("legend-blue.svg"),
   legendOrange: a("legend-orange.svg"),
   legendGrey: a("legend-grey.svg"),
@@ -99,6 +100,32 @@ export const volumeBars = [
 // 125 ticks on the timeline ruler; the longer ones sit under each month label.
 export const majorTicks = new Set([2, 22, 43, 62, 82, 102, 122]);
 export const TICK_COUNT = 125;
+
+// Phone chart ("Home page (mobile)" 156:6786): a Jul–Nov window drawn on a 354px
+// wide plot, with its own volume bars, cursor (Sep 12) and markers.
+export const mobileChart = {
+  width: 354,
+  cursorX: 212,
+  date: "Tue, Sep 12 ‘26",
+  tooltipDate: "Tue, Aug 18 ‘26",
+  months: ["Jul", "Aug", "Sep", "Oct", "Nov"],
+  ticks: 47,
+  majorTicks: new Set([2, 9, 16, 23, 30, 37, 44]),
+  bars: [
+    15, 11, 12, 16, 25, 21, 28, 38, 20, 25, 22, 18, 14, 11, 9, 14, 15, 20, 24, 19, 15, 12, 16, 21, 28, 34, 28, 20,
+    22, 26, 21, 9, 12, 25, 22, 29, 35, 29, 23, 20, 25, 28, 21, 14, 17, 13, 11, 12, 15, 21, 25, 30, 34, 29, 22, 16,
+    17, 13, 9, 10, 14, 17, 21, 19, 16, 11, 8, 13, 16, 17, 21, 19, 15, 19, 11, 9, 7, 10, 13, 17, 20, 20, 17,
+  ],
+  // [x, y, colour] of the 10px markers, from the Figma frame.
+  dots: [
+    [212, 36, "orange"],
+    [212, 106, "grey"],
+    [212, 124, "blue"],
+    [288, 41, "orange"],
+    [288, 66, "grey"],
+    [288, 117, "blue"],
+  ],
+};
 
 export const graphTools = [
   { id: "select", icon: a("tool-select.svg") },

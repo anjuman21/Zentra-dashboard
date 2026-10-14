@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
-import { icons, metrics, legend, yAxis, months, volumeBars, majorTicks, TICK_COUNT, graphTools } from "../data";
+import { icons, metrics, legend, yAxis, months, volumeBars, majorTicks, TICK_COUNT, graphTools, mobileChart } from "../data";
 
 const RANGES = ["1M", "3M", "6M", "1Y"];
 
@@ -24,6 +24,74 @@ function usePlotScale() {
   }, []);
 
   return [ref, scale];
+}
+
+function Tooltip({ date, className = "" }) {
+  return (
+    <div className={`tooltip ${className}`}>
+      <p className="tooltip__date">{date}</p>
+      <div className="tooltip__rows">
+        {legend.map((l) => (
+          <div key={l.label} className="tooltip__row">
+            <span className="tooltip__key">
+              <img src={l.dot} alt="" width="8" height="8" />
+              {l.label}
+            </span>
+            <span className={`tooltip__value tone-${l.tone}`}>{l.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const DOT = { orange: icons.dotOrange, grey: icons.dotGrey, blue: icons.dotBlue };
+// Horizontal positions are fractions of the 354px Figma plot, so the phone
+// chart stretches with the screen while keeping the design's heights.
+const mx = (x) => `${(x / mobileChart.width) * 100}%`;
+
+// Phones get their own chart window (Jul–Nov) from the mobile design.
+function MobileGraph() {
+  const { cursorX, date, tooltipDate, months: labels, ticks, majorTicks: majors, bars, dots } = mobileChart;
+  return (
+    <div className="m-graph" style={{ "--cx": mx(cursorX) }}>
+      <div className="m-graph__plot">
+        {yAxis.map((label, i) => (
+          <div key={label} className="m-graph__row">
+            <span className={`m-graph__grid${i === yAxis.length - 1 ? " is-base" : ""}`} />
+            <span className="m-graph__label">{label}</span>
+          </div>
+        ))}
+        <div className="m-graph__bars" aria-hidden="true">
+          {bars.map((h, i) => (
+            <span key={i} style={{ height: h }} />
+          ))}
+        </div>
+        <img className="m-graph__lines" src={icons.mobileGraphLines} alt="Market cap, BTC price and volume trend lines" />
+        <span className="m-graph__cursor" aria-hidden="true" />
+        {dots.map(([x, y, tone]) => (
+          <img key={`${x}-${y}`} className="m-graph__dot" style={{ left: `calc(${mx(x)} - 5px)`, top: y }} src={DOT[tone]} alt="" width="10" height="10" />
+        ))}
+      </div>
+      <div className="m-graph__axis">
+        <div className="m-graph__months">
+          {labels.map((m) => (
+            <span key={m}>{m}</span>
+          ))}
+        </div>
+        <div className="m-graph__ruler">
+          <div className="m-graph__ticks">
+            {Array.from({ length: ticks }, (_, i) => (
+              <span key={i} className={majors.has(i) ? "is-major" : ""} />
+            ))}
+          </div>
+        </div>
+      </div>
+      <span className="date-pill m-graph__pill">{date}</span>
+      {/* The mobile frame keeps the desktop tooltip date while the pill shows Sep 12. */}
+      <Tooltip date={tooltipDate} className="m-graph__tooltip" />
+    </div>
+  );
 }
 
 function Metrics() {
@@ -123,21 +191,10 @@ export default function MarketTrends() {
 
           <span className="date-pill">Tue, Aug 18 ‘26</span>
 
-          <div className="tooltip">
-        <p className="tooltip__date">Tue, Aug 18 ‘26</p>
-        <div className="tooltip__rows">
-          {legend.map((l) => (
-            <div key={l.label} className="tooltip__row">
-              <span className="tooltip__key">
-                <img src={l.dot} alt="" width="8" height="8" />
-                {l.label}
-              </span>
-              <span className={`tooltip__value tone-${l.tone}`}>{l.value}</span>
-            </div>
-          ))}
-            </div>
-          </div>
+          <Tooltip date="Tue, Aug 18 ‘26" />
         </div>
+
+        <MobileGraph />
       </div>
 
       <div className="graph-tools">

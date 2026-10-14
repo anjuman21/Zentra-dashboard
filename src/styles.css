@@ -1874,13 +1874,17 @@ input:focus-visible {
     scrollbar-width: thin;
   }
 
-  .tx-col--buy,
+  /* Column widths from the mobile Home frame (824px table). */
+  .tx-col--buy {
+    min-width: 189px;
+  }
+
   .tx-col--sell {
-    min-width: 172px;
+    min-width: 267px;
   }
 
   .tx-col--status {
-    min-width: 200px;
+    min-width: 236px;
   }
 
   .tx-col--action {
@@ -1921,8 +1925,8 @@ input:focus-visible {
 
   .chart-card {
     height: auto;
-    padding: 8px 8px 16px;
-    gap: 24px;
+    padding: 8px;
+    gap: 16px;
   }
 
   .kpis {
@@ -1935,7 +1939,7 @@ input:focus-visible {
 
   .chart {
     padding: 0;
-    gap: 24px;
+    gap: 16px;
   }
 
   .chart__title {
@@ -1947,7 +1951,8 @@ input:focus-visible {
   }
 
   .legend__item {
-    font-size: 13px;
+    font-size: 12px;
+    line-height: 1.05;
   }
 
   .series__line {
@@ -7283,5 +7288,147 @@ button.au-pill:hover {
     max-width: 72px;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+}
+
+/* Phone chart (Home page mobile 156:6786). Hidden above 767px. */
+.m-graph {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .graph {
+    display: none;
+  }
+
+  .m-graph {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .m-graph__plot {
+    position: relative;
+    height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .m-graph__row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 13px;
+  }
+
+  .m-graph__grid {
+    flex: 1 0 0;
+    height: 1px;
+    background: var(--series-line);
+  }
+
+  .m-graph__grid.is-base {
+    background: var(--series-base);
+  }
+
+  .m-graph__label {
+    font-size: 12px;
+    line-height: 1.05;
+    letter-spacing: -0.12px;
+    color: var(--text-head);
+    white-space: nowrap;
+  }
+
+  .m-graph__bars {
+    position: absolute;
+    left: 0;
+    right: 48px;
+    bottom: 7px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .m-graph__bars span {
+    width: 3px;
+    background: var(--bar);
+  }
+
+  .m-graph__lines {
+    position: absolute;
+    left: calc(-4.7 / 354 * 100%);
+    top: 33.3px;
+    width: calc(295 / 354 * 100%);
+    height: 133px;
+    max-width: none;
+  }
+
+  .m-graph__cursor {
+    position: absolute;
+    left: var(--cx);
+    top: 15px;
+    height: 198px;
+    border-left: 1px dashed var(--text-1);
+  }
+
+  .m-graph__dot {
+    position: absolute;
+  }
+
+  .m-graph__axis {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .m-graph__months {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.11px;
+    color: var(--text-head);
+  }
+
+  .m-graph__ruler {
+    border-bottom: 1px solid var(--tick);
+  }
+
+  .m-graph__ticks {
+    height: 13px;
+    margin-bottom: -1px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .m-graph__ticks span {
+    width: 1px;
+    height: 8px;
+    background: var(--tick);
+  }
+
+  .m-graph__ticks span.is-major {
+    height: 13px;
+  }
+
+  .date-pill.m-graph__pill {
+    top: 215px;
+    left: var(--cx);
+  }
+
+  /* Mobile Home frame uses 16px card titles. */
+  .chart-card .card-title,
+  .tx-card .card-title {
+    font-size: 16px;
+  }
+
+  .tooltip.m-graph__tooltip {
+    top: 27px;
+    /* 10px left of the cursor, never past the chart's left edge. */
+    left: max(0px, calc(var(--cx) - 171px));
   }
 }
