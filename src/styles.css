@@ -7432,3 +7432,85 @@ button.au-pill:hover {
     left: max(0px, calc(var(--cx) - 171px));
   }
 }
+
+/* ═════════════ Primary button style (from the "Button-testing" Alerts button) ═════════════
+   Purple gradient + soft purple drop shadow, three 1px inside strokes and two
+   inner shadows, drawn with pseudo-elements so no markup changes are needed:
+   - element: gradient, drop shadow, inner shadow 2 (white 25%, normal)
+   - ::before (Overlay blend): stroke 1 (white 30%) + inner shadow 1 (black 25%)
+   - ::after (Plus lighter, 40%): strokes 2 and 3, radial highlights at the
+     top-left and bottom-right corners, masked to a 1px ring
+   The 1px border stays (transparent) so every button keeps its size. */
+.btn-primary,
+.nav-link.is-active,
+.m-nav__swap,
+.mk-page.is-active {
+  position: relative;
+  isolation: isolate;
+  border-color: transparent;
+  background: var(--primary-gradient);
+  background-origin: border-box;
+  box-shadow: 1.5px 4px 10px 0 rgba(97, 74, 226, 0.25), inset 0 4px 14px 0 rgba(255, 255, 255, 0.25);
+  transition: transform 140ms ease, filter 140ms ease;
+}
+
+.btn-primary::before,
+.nav-link.is-active::before,
+.m-nav__swap::before,
+.mk-page.is-active::before,
+.btn-primary::after,
+.nav-link.is-active::after,
+.m-nav__swap::after,
+.mk-page.is-active::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.btn-primary::before,
+.nav-link.is-active::before,
+.m-nav__swap::before,
+.mk-page.is-active::before {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3), inset 0 -4px 14px 0 rgba(0, 0, 0, 0.25);
+  mix-blend-mode: overlay;
+}
+
+.btn-primary::after,
+.nav-link.is-active::after,
+.m-nav__swap::after,
+.mk-page.is-active::after {
+  padding: 1px;
+  opacity: 0.4;
+  background:
+    radial-gradient(50% 50% at 15% 15%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 100%),
+    radial-gradient(50% 50% at 85% 85%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  mix-blend-mode: screen; /* fallback */
+  mix-blend-mode: plus-lighter;
+}
+
+.btn-primary:hover:not(:disabled),
+.m-nav__swap:hover,
+.mk-page.is-active:hover {
+  filter: brightness(1.06);
+}
+
+.btn-primary:active:not(:disabled),
+.m-nav__swap:active,
+.mk-page.is-active:active {
+  transform: translateY(1px);
+  filter: brightness(0.98);
+}
+
+.btn-primary:focus-visible,
+.nav-link.is-active:focus-visible,
+.m-nav__swap:focus-visible,
+.mk-page.is-active:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
