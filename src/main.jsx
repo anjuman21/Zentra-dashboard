@@ -3,17 +3,19 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./styles.css";
 
-// Big screens: the layout is designed on a 1440 × 1024 frame. From 1600px wide,
-// scale the whole UI so that frame fills the screen height (never shrinking),
-// instead of stretching cards across a mostly empty 4K canvas.
+// Big screens: the layout is designed on a 1440 px wide frame. Above that, scale
+// the whole UI so the frame fills the screen width. Tables and cards then keep
+// their designed proportions instead of spreading out with large gaps; the page
+// simply scrolls a little more on short screens. On very wide, short screens
+// (ultrawide monitors) the zoom is capped so at least 720 px of height stays
+// visible, and the layout takes the extra width.
 const DESIGN_W = 1440;
-const DESIGN_H = 1024;
-const BIG_SCREEN = 1600;
+const MIN_VISIBLE_H = 720;
 
 function fitToScreen() {
   const root = document.documentElement;
   const { innerWidth: w, innerHeight: h } = window;
-  const zoom = w >= BIG_SCREEN ? Math.max(1, Math.min(w / DESIGN_W, h / DESIGN_H)) : 1;
+  const zoom = w > DESIGN_W ? Math.max(1, Math.min(w / DESIGN_W, h / MIN_VISIBLE_H)) : 1;
   root.style.zoom = zoom === 1 ? "" : String(zoom);
   root.style.setProperty("--app-h", `${h / zoom}px`);
 }
