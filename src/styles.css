@@ -1194,17 +1194,20 @@ input:focus-visible {
   min-width: 0;
 }
 
+/* Columns share the width in the design's proportions (228 / 228 / 236 / 84 at
+   1440 px), so wide screens spread every column instead of only the first two. */
 .tx-col--buy,
 .tx-col--sell {
-  flex: 1 0 0;
+  flex: 228 1 0;
 }
 
 .tx-col--status {
-  flex: 0 0 236px;
+  flex: 236 1 0;
 }
 
 .tx-col--rate {
-  flex: 0 0 84px;
+  flex: 84 1 0;
+  min-width: 84px;
 }
 
 .tx-col--action {
@@ -2261,7 +2264,8 @@ input:focus-visible {
 
 .pf-row {
   display: grid;
-  grid-template-columns: 142px 191px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) 48px;
+  /* Widths from the 1440 px design, used as ratios so the columns grow evenly. */
+  grid-template-columns: minmax(0, 142fr) minmax(0, 191fr) repeat(3, minmax(0, 147.67fr)) 48px;
   grid-template-rows: minmax(0, 1fr);
   flex: 1 0 0;
   min-height: 1px;
@@ -2282,7 +2286,7 @@ input:focus-visible {
 }
 
 .pf-row--head span {
-  padding: 8px 16px;
+  padding: 8px 16px 8px 8px;
 }
 
 .pf-row--head span:nth-child(1) {
@@ -2335,7 +2339,7 @@ input:focus-visible {
 }
 
 .pf-cell--change {
-  padding: 0 16px;
+  padding: 0 16px 0 8px;
 }
 
 .pf-cell--pnl {
@@ -2343,7 +2347,7 @@ input:focus-visible {
   align-items: flex-start;
   justify-content: center;
   gap: 4px;
-  padding: 0 16px;
+  padding: 0 16px 0 8px;
   letter-spacing: -0.14px;
 }
 
@@ -3155,7 +3159,8 @@ input:focus-visible {
 /* 49px rows fill the table at 10 coins; shorter lists stop at 64px per row. */
 .mk-row {
   display: grid;
-  grid-template-columns: 153px 127px repeat(4, minmax(0, 1fr)) 48px;
+  /* Widths from the 1440 px design, used as ratios so the columns grow evenly. */
+  grid-template-columns: minmax(0, 153fr) minmax(0, 127fr) repeat(4, minmax(0, 124fr)) 48px;
   grid-template-rows: minmax(0, 1fr);
   flex: 1 0 0;
   min-height: 1px;
@@ -3213,7 +3218,7 @@ input:focus-visible {
 }
 
 .mk-cell--change {
-  padding: 0 16px;
+  padding: 0 16px 0 8px;
   letter-spacing: -0.14px;
 }
 
@@ -3867,7 +3872,9 @@ input:focus-visible {
 }
 
 .mk-row.tr-row {
-  grid-template-columns: 142px 92px 93px 97px 104px 144px minmax(0, 1fr) 48px;
+  grid-template-columns:
+    minmax(0, 142fr) minmax(0, 92fr) minmax(0, 93fr) minmax(0, 97fr) minmax(0, 104fr) minmax(0, 144fr)
+    minmax(0, 120fr) 48px;
   max-height: none;
 }
 
@@ -4947,7 +4954,7 @@ input:focus-visible {
 }
 
 .mk-row.hi-row {
-  grid-template-columns: 125px 113px 121px repeat(3, 112px) minmax(0, 1fr) 36px;
+  grid-template-columns: minmax(0, 125fr) minmax(0, 113fr) minmax(0, 121fr) repeat(3, minmax(0, 112fr)) minmax(0, 93fr) 36px;
   max-height: none;
 }
 
