@@ -1800,6 +1800,17 @@ input:focus-visible {
   }
 }
 
+/* Desktop: the sidebar is designed for a 1024 px tall frame. On shorter
+   screens (or zoomed big screens) it keeps that height and sticks with a
+   negative offset, so scrolling the page reveals Help, Settings and the theme
+   toggle at the bottom instead of cutting them off. */
+@media (min-width: 1024px) {
+  .sidebar {
+    top: min(0px, calc(var(--app-h, 100vh) - 1024px));
+    height: max(var(--app-h, 100vh), 1024px);
+  }
+}
+
 /* Tablet: sidebar becomes a drawer. */
 @media (max-width: 1023px) {
   .sidebar {
