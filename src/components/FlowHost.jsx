@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useFlow, closeFlow } from "../flows";
 import * as Home from "./flows/HomeFlows";
 import * as Pf from "./flows/PortfolioFlows";
+import * as Mk from "./flows/MarketsFlows";
 
 // Every overlay the pages can open, by name.
 const FLOWS = {
@@ -21,6 +22,13 @@ const FLOWS = {
   "portfolio.asset": Pf.AssetDetail,
   "portfolio.row": Pf.RowActions,
   "portfolio.alloc": Pf.AllocationDetails,
+  "markets.filters": Mk.MarketFilters,
+  "markets.coin": Mk.MarketCoin,
+  "markets.row": Mk.MarketRowMenu,
+  "markets.alert": Mk.PriceAlert,
+  "markets.compare": Mk.CompareCoins,
+  "markets.currency": Mk.CurrencyMenu,
+  "markets.fg": Mk.FearGreedExplainer,
 };
 
 export function registerFlows(map) {

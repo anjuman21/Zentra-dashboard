@@ -11,16 +11,19 @@ import {
   fearGreed,
   trendingPairs,
 } from "../marketsData";
-
-const CURRENCIES = ["USD", "EUR", "GBP"];
+import { openFlow } from "../flows";
+import { anchorOf } from "./Modal";
+import { marketWatch, currencyStore, filterStore, applyFilters, POPULAR_WATCH, convertPrice, mficons } from "../marketsFlowData";
+import { COINS } from "../homeFlowData";
+import { LineChart } from "./flows/HomeFlows";
 
 const pct = (n) => `${n > 0 ? "+" : ""}${n.toFixed(2)}%`;
 
 // Each tab is a view over the same list, so switching tabs is instant.
-function coinsForTab(tab) {
+function coinsForTab(tab, watch) {
   switch (tab) {
     case "Watchlists":
-      return coins.filter((c) => c.watch);
+      return coins.filter((c) => watch.includes(c.symbol));
     case "Top Gainers":
       return [...coins].filter((c) => c.change24h > 0).sort((x, y) => y.change24h - x.change24h);
     case "Top Losers":
@@ -72,7 +75,8 @@ export function Stats({ items = marketStats }) {
 }
 
 function Toolbar({ tab, onTab }) {
-  const [currency, setCurrency] = useState(0);
+  const currency = currencyStore.use();
+  const filters = filterStore.use();
   return (
     <div className="mk-toolbar">
       <div className="mk-tabs" role="tablist" aria-label="Market lists">
@@ -90,12 +94,17 @@ function Toolbar({ tab, onTab }) {
         ))}
       </div>
       <div className="mk-filters">
-        <button type="button" className="mk-chip" onClick={() => setCurrency((c) => (c + 1) % CURRENCIES.length)}>
-          <span>{CURRENCIES[currency]}</span>
+        <button type="button" className="mk-chip" aria-haspopup="dialog" onClick={(e) => openFlow("markets.currency", { anchor: anchorOf(e.currentTarget) })}>
+          <span>{currency}</span>
           <img className="mono" src={icons.arrowDown} alt="" width="18" height="18" />
         </button>
-        <button type="button" className="mk-chip">
-          <span>Filters</span>
+        <button
+          type="button"
+          className={`mk-chip${filters ? " is-filtered" : ""}`}
+          aria-haspopup="dialog"
+          onClick={(e) => openFlow("markets.filters", { anchor: anchorOf(e.currentTarget) })}
+        >
+          <span>{filters ? "Filters · on" : "Filters"}</span>
           <img className="mono" src={micons.tune} alt="" width="18" height="18" />
         </button>
       </div>
@@ -105,6 +114,8 @@ function Toolbar({ tab, onTab }) {
 
 function CoinTable({ rows }) {
   const last = rows.length - 1;
+  const cur = currencyStore.use();
+  const open = (symbol) => openFlow("markets.coin", { symbol });
   return (
     <div className="pf-table-scroll mk-table-scroll">
       <div className="mk-table" role="table" aria-label="Cryptocurrency prices">
@@ -119,7 +130,14 @@ function CoinTable({ rows }) {
         </div>
         <div className="mk-rows">
           {rows.map((c, i) => (
-            <div key={c.symbol} className={`mk-row${i === last ? " is-last" : ""}`} role="row">
+            <div
+              key={c.symbol}
+              className={`mk-row mk-row--btn${i === last ? " is-last" : ""}`}
+              role="row"
+              tabIndex={0}
+              onClick={() => open(c.symbol)}
+              onKeyDown={(e) => e.key === "Enter" && e.target === e.currentTarget && open(c.symbol)}
+            >
               <div className="mk-cell mk-cell--coin" role="cell">
                 <img src={c.icon} alt="" width="32" height="32" />
                 <div className="pf-two">
@@ -127,23 +145,31 @@ function CoinTable({ rows }) {
                   <span className="pf-two__sub">{c.symbol}</span>
                 </div>
               </div>
-              <div className="mk-cell" role="cell">{c.price}</div>
+              <div className="mk-cell" role="cell">{convertPrice(c.price, cur)}</div>
               <div className={`mk-cell mk-cell--change ${c.change24h < 0 ? "is-down" : "is-up"}`} role="cell">
                 {pct(c.change24h)}
               </div>
               <div className={`mk-cell mk-cell--change ${c.change7d < 0 ? "is-down" : "is-up"}`} role="cell">
                 {pct(c.change7d)}
               </div>
-              <div className="mk-cell" role="cell">{c.volume}</div>
-              <div className="mk-cell" role="cell">{c.cap}</div>
+              <div className="mk-cell" role="cell">{convertPrice(c.volume, cur)}</div>
+              <div className="mk-cell" role="cell">{convertPrice(c.cap, cur)}</div>
               <div className="mk-cell mk-cell--action" role="cell">
-                <button type="button" className="icon-btn" aria-label={`More actions for ${c.name}`}>
+                <button
+                  type="button"
+                  className="icon-btn"
+                  aria-label={`More actions for ${c.name}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openFlow("markets.row", { symbol: c.symbol, anchor: anchorOf(e.currentTarget) });
+                  }}
+                >
                   <img className="mono" src={icons.moreVert} alt="" width="18" height="18" />
                 </button>
               </div>
             </div>
           ))}
-          {rows.length === 0 && <p className="mk-empty">No coins in this list yet.</p>}
+          {rows.length === 0 && <p className="mk-empty">No coins match these filters.</p>}
         </div>
       </div>
     </div>
@@ -218,8 +244,11 @@ export function Pagination({ total }) {
 
 function FearGreed() {
   return (
-    <div className="card mk-fg">
-      <h2 className="card-title">Fear &amp; Greed Index</h2>
+    <button type="button" className="card mk-fg mk-fg--btn" onClick={() => openFlow("markets.fg")} aria-label="Fear and Greed Index details">
+      <h2 className="card-title">
+        Fear &amp; Greed Index
+        <img className="mono mk-fg__info" src={mficons.info} alt="" width="16" height="16" />
+      </h2>
       <img className="mk-fg__gauge" src={micons.fearGreed} alt="" width="294" height="134" />
       <div className="mk-fg__reading">
         <span className="mk-fg__value">{fearGreed.value}</span>
@@ -229,7 +258,7 @@ function FearGreed() {
         <span>Yesterday:</span>
         <span className="mk-fg__yesterday-value">{fearGreed.yesterday}</span>
       </p>
-    </div>
+    </button>
   );
 }
 
@@ -254,10 +283,72 @@ function TrendingPairs() {
   );
 }
 
+// 02A · first visit to Watchlists: explain, suggest, and offer to add coins.
+function EmptyWatchlist({ onBrowse }) {
+  const watch = marketWatch.use();
+  return (
+    <div className="mf-empty">
+      <div className="mf-empty__card">
+        <img src={mficons.empty} alt="" width="134" height="130" />
+        <div className="mf-empty__text">
+          <h3 className="mf-empty__title">Your watchlist is empty</h3>
+          <p className="mf-empty__sub">Tap the ☆ next to any coin to track its price here. Your watchlist also appears on Home.</p>
+        </div>
+        <div className="mf-empty__actions">
+          <button type="button" className="ob-btn ob-btn--secondary" onClick={onBrowse}>
+            Browse all cryptos
+          </button>
+          <button
+            type="button"
+            className="btn-primary ob-btn"
+            onClick={() => openFlow("home.add-watch", { store: marketWatch, sub: "Pick the coins you want to track in Markets" })}
+          >
+            Add coins
+          </button>
+        </div>
+      </div>
+      <div className="mf-popular">
+        <div className="mf-popular__head">
+          <span className="mf-popular__title">Popular to watch</span>
+          <span className="hp-meta">Based on Zentra traders</span>
+        </div>
+        <div className="mf-popular__grid">
+          {POPULAR_WATCH.map((p, i) => {
+            const c = COINS[p.coin];
+            const on = watch.includes(p.coin);
+            return (
+              <div key={p.coin} className="mf-pop">
+                <span className="mf-pop__name">
+                  <img src={c.icon} alt="" width="20" height="20" />
+                  {c.name}
+                </span>
+                <span className="mf-pop__price">{p.price}</span>
+                <span className={`mf-pop__change${p.up ? " is-up" : ""}`}>{p.change}</span>
+                <LineChart points={[0.3, 0.45, 0.4, 0.55, 0.5, 0.6, 0.58, 0.7, 0.66, 0.78].map((v) => (p.up ? v : 1 - v))} color={p.up ? "#48b187" : "#f82a51"} height={44} />
+                <button
+                  type="button"
+                  className={`mf-pop__watch${on ? " is-on" : ""}`}
+                  aria-pressed={on}
+                  onClick={() => marketWatch.set((w) => (on ? w.filter((s) => s !== p.coin) : [...w, p.coin]))}
+                >
+                  {on ? "✓ Watching" : "+ Watch"}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Markets() {
   const [tab, setTab] = useState(marketTabs[0]);
-  const rows = useMemo(() => coinsForTab(tab), [tab]);
-  const total = tab === marketTabs[0] ? TOTAL_RESULTS : rows.length;
+  const watch = marketWatch.use();
+  const filters = filterStore.use();
+  const rows = useMemo(() => applyFilters(coinsForTab(tab, watch), filters), [tab, watch, filters]);
+  const total = tab === marketTabs[0] && !filters ? TOTAL_RESULTS : rows.length;
+  const emptyWatch = tab === "Watchlists" && watch.length === 0;
 
   return (
     // Unlike Portfolio, the right column starts level with the page title.
@@ -268,9 +359,9 @@ export default function Markets() {
             <Stats />
           <div className="mk-body">
             <Toolbar tab={tab} onTab={setTab} />
-            <CoinTable rows={rows} />
+            {emptyWatch ? <EmptyWatchlist onBrowse={() => setTab(marketTabs[0])} /> : <CoinTable rows={rows} />}
           </div>
-          <Pagination key={tab} total={total} />
+          {!emptyWatch && <Pagination key={tab} total={total} />}
         </div>
       </section>
       <aside className="right-col pf-side">

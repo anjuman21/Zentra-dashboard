@@ -203,24 +203,25 @@ function Change({ value, bold }) {
   return <span className={`fl-change ${value < 0 ? "is-down" : "is-up"}${bold ? " is-bold" : ""}`}>{pct(value)}</span>;
 }
 
-export function AddWatchlist() {
-  const watched = watchStore.use();
+// Adds to the Home watchlist by default; Markets passes its own list.
+export function AddWatchlist({ store = watchStore, sub = "Pick the coins you want to track on Home" }) {
+  const watched = store.use();
   const [tab, setTab] = useState("All");
   const [q, setQ] = useState("");
-  const [picked, setPicked] = useState(["DOGE", "DOT"]);
+  const [picked, setPicked] = useState(() => ["DOGE", "DOT"].filter((x) => !store.get().includes(x)));
   const list = WATCH_TABS[tab].filter((s) => {
     const c = COINS[s];
     return !q || `${c.name} ${c.symbol}`.toLowerCase().includes(q.toLowerCase());
   });
   const toggle = (s) => setPicked((p) => (p.includes(s) ? p.filter((x) => x !== s) : [...p, s]));
   const add = () => {
-    watchStore.set((w) => [...w, ...picked.filter((s) => !w.includes(s))]);
+    store.set((w) => [...w, ...picked.filter((s) => !w.includes(s))]);
     closeFlow();
   };
   return (
     <Modal onClose={closeFlow} labelledBy="fl-watch-title" width={496}>
       <div className="fl-dialog">
-        <Head id="fl-watch-title" title="Add to Watchlist" sub="Pick the coins you want to track on Home" onClose={closeFlow} />
+        <Head id="fl-watch-title" title="Add to Watchlist" sub={sub} onClose={closeFlow} />
         <div className="fl-stack-24">
           <label className="fl-search">
             <img className="mono" src={ficons.search} alt="" width="18" height="18" />
