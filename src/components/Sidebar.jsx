@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { icons, mainMenu, financeOps, footerLinks } from "../data";
 import { readProgress } from "../onboardingData";
+import { openFlow } from "../flows";
 
 export function NavLink({ item, active, onClick, small }) {
   // Items without a dedicated white glyph get their grey icon turned white on the purple pill.
@@ -95,7 +96,10 @@ export default function Sidebar({ page, onNavigate, open, onClose, theme, onTogg
               type="button"
               className={`ask-ai__bar${page === "ai" ? " is-active" : ""}`}
               aria-current={page === "ai" ? "page" : undefined}
-              onClick={() => onNavigate("ai")}
+              onClick={() => {
+                onClose();
+                openFlow("home.ai");
+              }}
             >
               <span className="ask-ai__label">
                 <img className="mono" src={icons.stars} alt="" width="18" height="18" />

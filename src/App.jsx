@@ -32,6 +32,8 @@ import {
 import FinishSetup from "./components/FinishSetup";
 import Help, { helpBack, helpTitle } from "./components/Help";
 import Settings, { settingsBack, settingsTitle } from "./components/Settings";
+import FlowHost from "./components/FlowHost";
+import { openFlow } from "./flows";
 
 function readTheme() {
   try {
@@ -113,12 +115,12 @@ export default function App() {
 
   const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
 
-  // ⌘D / Ctrl+D opens Noa, as the shortcut hint on the Ask AI bar promises.
+  // ⌘D / Ctrl+D opens the Ask AI panel, as the shortcut hint on the Ask AI bar promises.
   useEffect(() => {
     const onKey = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "d") {
         e.preventDefault();
-        window.location.hash = "#/ai";
+        openFlow("home.ai");
       }
     };
     window.addEventListener("keydown", onKey);
@@ -178,6 +180,7 @@ export default function App() {
 
       <MobileNav page={page === "setup" ? "overview" : page} onNavigate={navigate} />
       {page === "setup" && <FinishSetup onClose={closeSetup} />}
+      <FlowHost />
       <MobileMenu page={page} onNavigate={navigate} open={drawerOpen} onClose={closeDrawer} theme={theme} onToggleTheme={toggleTheme} />
     </div>
   );
