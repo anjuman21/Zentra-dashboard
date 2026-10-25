@@ -64,7 +64,7 @@ export function Stats({ items = marketStats }) {
             <p className="kpi__label">{s.label}</p>
             <div className="kpi__value">
               <span className="kpi__number pf-stat__number">{s.value}</span>
-              <span className={`kpi__change ${s.change.startsWith("-") ? "down" : "up"}`}>{s.change}</span>
+              <span className={`kpi__change ${s.tone || (s.change.startsWith("-") ? "down" : "up")}`}>{s.change}</span>
             </div>
           </div>
           <img className="pf-stat__spark" src={s.spark} alt="" width="183" height="36" />
