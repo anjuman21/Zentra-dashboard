@@ -5769,7 +5769,8 @@ button.yf-risk:hover {
   color: var(--error);
 }
 
-.btn-primary.yfl-btn-danger {
+.btn-primary.yfl-btn-danger,
+.btn-primary.fl-btn-danger {
   background: var(--error);
   box-shadow: none;
 }
@@ -8017,4 +8018,73 @@ button.yf-risk:hover {
   .ai-voice__text {
     font-size: 16px;
   }
+}
+
+/* ═════════════ Log out · Confirm ═════════════ */
+
+.fl-logout {
+  align-items: center;
+  gap: 18px;
+  text-align: center;
+}
+
+.fl-logout__icon {
+  width: 56px;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(248, 42, 81, 0.1);
+}
+
+.fl-logout__text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fl-logout__text h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.fl-logout__text p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.fl-logout__keep,
+.fl-logout__all {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--hp-sunk);
+  text-align: left;
+}
+
+.fl-logout__keep .fl-row {
+  font-size: 13px;
+}
+
+.fl-logout__keep .fl-row__value {
+  font-weight: 500;
+  color: var(--text-1);
+}
+
+.fl-logout__all {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.fl-logout .fl-actions {
+  width: 100%;
 }

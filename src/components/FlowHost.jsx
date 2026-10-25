@@ -22,6 +22,7 @@ const FLOWS = {
   "home.ai": Home.AskAiPanel,
   "home.balances": Home.BalancesPopover,
   "home.profile": Home.ProfileMenu,
+  "home.logout": Home.LogoutDialog,
   "portfolio.add": Pf.AddAssets,
   "portfolio.manual": Pf.ManualTransaction,
   "portfolio.export": Pf.ExportPortfolio,

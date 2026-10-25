@@ -786,11 +786,57 @@ export function ProfileMenu() {
           ))}
         </ul>
         <hr className="fl-hr fl-hr--menu" />
-        <button type="button" className="fl-menu__item is-danger" onClick={() => go("login")}>
+        <button type="button" className="fl-menu__item is-danger" aria-haspopup="dialog" onClick={() => openFlow("home.logout")}>
           <img src={ficons.logout} alt="" width="18" height="18" />
           <span className="fl-menu__label">Log out</span>
         </button>
       </div>
     </Popover>
+  );
+}
+
+/* ───────────── Log out · Confirm ───────────── */
+
+// Logging out ends this session only; rules and orders keep running on Zentra’s side.
+export function LogoutDialog() {
+  const [everywhere, setEverywhere] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const leave = () => {
+    setBusy(true);
+    setTimeout(() => go("login"), 600);
+  };
+  return (
+    <Modal onClose={closeFlow} labelledBy="fl-logout-title" width={400}>
+      <div className="fl-dialog fl-logout">
+        <span className="fl-logout__icon" aria-hidden="true">
+          <img src={ficons.logout} alt="" width="22" height="22" />
+        </span>
+        <div className="fl-logout__text">
+          <h2 id="fl-logout-title">Log out of Zentra?</h2>
+          <p>You’ll need your password and 2FA code to log back in.</p>
+        </div>
+        <div className="fl-logout__keep">
+          <span className="fl-strong fl-strong--13">Keeps running while you’re away</span>
+          <Row label="Open orders" value="5 orders" />
+          <Row label="Automations" value="5 active rules" />
+          <Row label="Price alerts" value="Push + email" />
+        </div>
+        <label className="fl-logout__all">
+          <span className="fl-coin__name">
+            <span className="fl-strong fl-strong--13">Log out of all devices</span>
+            <span className="fl-sub fl-sub--11">Also ends 2 other sessions · Chrome on Windows, Zentra iOS</span>
+          </span>
+          <Toggle on={everywhere} onChange={setEverywhere} label="Log out of all devices" />
+        </label>
+        <div className="fl-actions fl-actions--8">
+          <button type="button" className="ob-btn ob-btn--secondary" onClick={closeFlow}>
+            Stay logged in
+          </button>
+          <button type="button" className="btn-primary ob-btn fl-btn-danger" onClick={leave} disabled={busy}>
+            {busy ? "Logging out…" : everywhere ? "Log out everywhere" : "Log out"}
+          </button>
+        </div>
+      </div>
+    </Modal>
   );
 }
