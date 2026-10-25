@@ -5,6 +5,7 @@ import * as Pf from "./flows/PortfolioFlows";
 import * as Mk from "./flows/MarketsFlows";
 import * as Tr from "./flows/TradeFlows";
 import * as An from "./flows/AnalyticsFlows";
+import * as Hi from "./flows/HistoryFlows";
 
 // Every overlay the pages can open, by name.
 const FLOWS = {
@@ -45,6 +46,13 @@ const FLOWS = {
   "analytics.asset": An.AssetAnalytics,
   "analytics.winrate": An.WinRate,
   "analytics.more": An.MoreMenu,
+  "history.types": Hi.TypeFilter,
+  "history.pick": Hi.PickMenu,
+  "history.tx": Hi.TxReceipt,
+  "history.export": Hi.ExportHistory,
+  "history.status": Hi.StatusDetail,
+  "history.fees": Hi.FeeBreakdown,
+  "history.filters": Hi.MobileFilters,
 };
 
 export function registerFlows(map) {

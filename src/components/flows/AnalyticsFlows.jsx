@@ -35,8 +35,8 @@ const PRESETS = [
 
 /* ───────────── 01A · Date range ───────────── */
 
-export function DateRange({ anchor }) {
-  const st = analyticsStore.get();
+export function DateRange({ anchor, store = analyticsStore, note = "Applies to every chart on this page" }) {
+  const st = store.get();
   const [from, setFrom] = useState(st.from);
   const [to, setTo] = useState(st.to);
   const [preset, setPreset] = useState(st.preset);
@@ -133,7 +133,7 @@ export function DateRange({ anchor }) {
             <span className="fl-strong fl-strong--13">
               {SHORT[from[1]]} {pad(from[2])} – {SHORT[to[1]]} {pad(to[2])}, {to[0]} · {days(from, to)} day{days(from, to) === 1 ? "" : "s"}
             </span>
-            <span className="fl-sub">Applies to every chart on this page</span>
+            <span className="fl-sub">{note}</span>
           </span>
           <button type="button" className="ob-btn ob-btn--ghost fl-btn-auto" onClick={closeFlow}>
             Cancel
@@ -142,7 +142,7 @@ export function DateRange({ anchor }) {
             type="button"
             className="btn-primary ob-btn fl-btn-auto"
             onClick={() => {
-              analyticsStore.set((s) => ({ ...s, from, to, preset }));
+              store.set((s) => ({ ...s, from, to, preset }));
               closeFlow();
             }}
           >

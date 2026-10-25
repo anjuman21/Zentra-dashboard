@@ -1,31 +1,143 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { icons } from "../data";
 import { micons } from "../marketsData";
 import { aicons } from "../analyticsData";
 import { CardTitle } from "./Portfolio";
 import { Pagination } from "./Markets";
+import { anchorOf } from "./Modal";
+import { openFlow } from "../flows";
+import { fmtDay } from "./flows/AnalyticsFlows";
+import { historyStore, historyDates, filterRows, resultCount, statusOf, SearchResults } from "./flows/HistoryFlows";
 import {
   hicons,
   historyStats,
-  TYPES,
   STATUSES,
   ASSETS,
-  transactions,
   quickStats,
   trendY,
   trendMonths,
   historyTopAssets,
 } from "../historyData";
 
-// A filter chip cycles through "All …" and each option.
-function FilterChip({ allLabel, options, value, onChange }) {
-  const list = [null, ...options];
-  const next = () => onChange(list[(list.indexOf(value) + 1) % list.length]);
+const pop = (name, props) => (e) => openFlow(name, { anchor: anchorOf(e.currentTarget), ...props });
+
+// A filter chip opens its menu under itself.
+function FilterChip({ label, active, onClick }) {
   return (
-    <button type="button" className="pf-export hi-chip" onClick={next} aria-label={`Filter: ${value || allLabel}`}>
+    <button type="button" className={`pf-export hi-chip${active ? " is-active" : ""}`} aria-haspopup="dialog" onClick={onClick}>
       <img className="mono" src={icons.arrowDown} alt="" width="18" height="18" />
-      <span>{value || allLabel}</span>
+      <span>{label}</span>
     </button>
+  );
+}
+
+// "Sep 01 - Sep 07, 2026", with the year on both ends only when they differ.
+const rangeLabel = ({ from, to }) => (from[0] === to[0] ? `${fmtDay(from).slice(0, 6)} - ${fmtDay(to)}` : `${fmtDay(from)} - ${fmtDay(to)}`);
+
+const typesLabel = (types) => (!types.length ? "All Types" : types.length <= 2 ? types.join(", ") : `${types.length} types`);
+
+// 07A · the search field, with its results dropped under it.
+function SearchField() {
+  const st = historyStore.use();
+  const [open, setOpen] = useState(false);
+  const box = useRef(null);
+  useEffect(() => {
+    if (!open) return;
+    const off = (e) => !box.current?.contains(e.target) && setOpen(false);
+    document.addEventListener("mousedown", off);
+    return () => document.removeEventListener("mousedown", off);
+  }, [open]);
+  const setQuery = (query) => historyStore.set((s) => ({ ...s, query }));
+  return (
+    <div className="hi-search" ref={box}>
+      <label className={`hi-search__field${open || st.query ? " is-focus" : ""}`}>
+        <img className="mono" src={icons.search} alt="" width="18" height="18" />
+        <input
+          value={st.query}
+          placeholder="Search by hash"
+          aria-label="Search transactions"
+          onFocus={() => setOpen(true)}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setOpen(true);
+          }}
+          onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
+        />
+        {st.query && (
+          <button type="button" className="hi-search__clear" aria-label="Clear search" onClick={() => setQuery("")}>
+            ×
+          </button>
+        )}
+      </label>
+      {open && st.query.trim() && (
+        <div className="hi-search__drop">
+          <SearchResults
+            query={st.query}
+            notes={st.notes}
+            onPick={(t) => {
+              setOpen(false);
+              openFlow("history.tx", { id: t.id });
+            }}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function EmptyResults({ st }) {
+  const what = [st.status && st.status.toLowerCase(), st.asset, st.types.length ? st.types.map((t) => t.toLowerCase() + "s").join(" or ") : "transactions"]
+    .filter(Boolean)
+    .join(" ");
+  return (
+    <div className="hi-empty">
+      <span className="hi-empty__icon">
+        <img className="mono" src="/assets/history.svg" alt="" width="20" height="20" />
+      </span>
+      <div className="hi-empty__text">
+        <h3>No transactions match these filters</h3>
+        <p>There are no {what} between Aug 18 – Aug 27. Try removing a filter or widening the date range.</p>
+      </div>
+      <div className="hi-empty__actions">
+        <button type="button" className="ob-btn ob-btn--secondary" onClick={() => historyStore.set((s) => ({ ...s, types: [], asset: null, status: null }))}>
+          Clear all filters
+        </button>
+        <button
+          type="button"
+          className="btn-primary ob-btn"
+          onClick={() => {
+            historyDates.set({ from: [2026, 5, 10], to: [2026, 8, 7], preset: "Last 90 days" });
+            historyStore.set((s) => ({ ...s, status: null }));
+          }}
+        >
+          Show last 90 days
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ActiveFilters({ st }) {
+  const chips = [
+    ...st.types.map((t) => [`Type: ${t}`, (s) => ({ ...s, types: s.types.filter((x) => x !== t) })]),
+    st.asset && [`Asset: ${st.asset}`, (s) => ({ ...s, asset: null })],
+    st.status && [`Status: ${st.status}`, (s) => ({ ...s, status: null })],
+  ].filter(Boolean);
+  if (!chips.length) return null;
+  return (
+    <div className="hi-active">
+      {chips.map(([label, drop]) => (
+        <span key={label} className="hi-active__chip">
+          {label}
+          <button type="button" aria-label={`Remove ${label}`} onClick={() => historyStore.set(drop)}>
+            ×
+          </button>
+        </span>
+      ))}
+      <button type="button" className="hi-active__clear" onClick={() => historyStore.set((s) => ({ ...s, types: [], asset: null, status: null }))}>
+        Clear all
+      </button>
+    </div>
   );
 }
 
@@ -48,7 +160,7 @@ function Stats() {
   );
 }
 
-function TransactionTable({ rows }) {
+function TransactionTable({ rows, st }) {
   const last = rows.length - 1;
   return (
     <div className="pf-table-scroll hi-table-scroll">
@@ -63,7 +175,7 @@ function TransactionTable({ rows }) {
         </div>
         <div className="mk-rows hi-rows">
           {rows.map((t, i) => (
-            <div key={`${t.date}${t.time}`} className={`mk-row hi-row${i === last ? " is-last" : ""}`} role="row">
+            <div key={t.id} className={`mk-row hi-row is-clickable${i === last ? " is-last" : ""}`} role="row" onClick={() => openFlow("history.tx", { id: t.id })}>
               <div className="mk-cell hi-date" role="cell">
                 <span>{t.date}</span>
                 <span className="pf-two__sub">{t.time}</span>
@@ -78,17 +190,38 @@ function TransactionTable({ rows }) {
               <div className="mk-cell" role="cell">{t.amount}</div>
               <div className="mk-cell" role="cell">{t.price}</div>
               <div className="mk-cell" role="cell">{t.total}</div>
-              <div className={`mk-cell hi-status hi-status--${t.status.toLowerCase()}`} role="cell">
-                {t.status}
+              <div className={`mk-cell hi-status hi-status--${statusOf(t, st).toLowerCase()}`} role="cell">
+                {statusOf(t, st) === "Complete" ? (
+                  statusOf(t, st)
+                ) : (
+                  <button
+                    type="button"
+                    className="hi-status__btn"
+                    aria-haspopup="dialog"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      pop("history.status", { id: t.id })(e);
+                    }}
+                  >
+                    {statusOf(t, st)}
+                  </button>
+                )}
               </div>
               <div className="mk-cell mk-cell--action" role="cell">
-                <button type="button" className="icon-btn" aria-label={`Open ${t.type} ${t.asset} on ${t.date}`}>
+                <button
+                  type="button"
+                  className="icon-btn"
+                  aria-label={`Open ${t.type} ${t.asset} on ${t.date}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openFlow("history.tx", { id: t.id });
+                  }}
+                >
                   <img className="mono" src={micons.chevronRight} alt="" width="18" height="18" />
                 </button>
               </div>
             </div>
           ))}
-          {rows.length === 0 && <p className="mk-empty">No transactions match these filters.</p>}
         </div>
       </div>
     </div>
@@ -100,13 +233,21 @@ function QuickStats() {
     <div className="card hi-quick">
       <h2 className="card-title">Quick Stats</h2>
       <div className="hi-quick__list">
-        {quickStats.map((q) => (
-          <div key={q.label} className="hi-quick__row">
-            <span className="hi-quick__label">{q.label}</span>
-            <span>{q.value}</span>
-            <span className={q.change.startsWith("-") ? "down" : "up"}>{q.change}</span>
-          </div>
-        ))}
+        {quickStats.map((q) =>
+          q.label === "Total Fees" ? (
+            <button key={q.label} type="button" className="hi-quick__row is-btn" aria-haspopup="dialog" onClick={pop("history.fees")}>
+              <span className="hi-quick__label">{q.label}</span>
+              <span>{q.value}</span>
+              <span className="down">{q.change}</span>
+            </button>
+          ) : (
+            <div key={q.label} className="hi-quick__row">
+              <span className="hi-quick__label">{q.label}</span>
+              <span>{q.value}</span>
+              <span className={q.change.startsWith("-") ? "down" : "up"}>{q.change}</span>
+            </div>
+          ),
+        )}
       </div>
     </div>
   );
@@ -180,18 +321,11 @@ function TopAssets() {
 }
 
 export default function History() {
-  const [type, setType] = useState(null);
-  const [asset, setAsset] = useState(null);
-  const [status, setStatus] = useState(null);
-  const filtered = type || asset || status;
-
-  const rows = useMemo(
-    () =>
-      transactions.filter(
-        (t) => (!type || t.type === type) && (!asset || t.asset === asset) && (!status || t.status === status),
-      ),
-    [type, asset, status],
-  );
+  const st = historyStore.use();
+  const dates = historyDates.use();
+  const filtered = st.types.length || st.asset || st.status;
+  const rows = filterRows(st);
+  const total = resultCount(st, rows);
 
   return (
     <main className="content markets history">
@@ -210,29 +344,41 @@ export default function History() {
           <div className="mk-body hi-body">
             <div className="hi-filters">
               <div className="hi-filters__group">
-                <button type="button" className="pf-export an-date">
+                <button
+                  type="button"
+                  className="pf-export an-date"
+                  aria-haspopup="dialog"
+                  onClick={pop("analytics.date", { store: historyDates, note: "Applies to your transaction list" })}
+                >
                   <img className="mono" src={aicons.calendar} alt="" width="18" height="18" />
-                  <span>Sep 01, 2026 - Sep 07, 2026</span>
+                  <span>{rangeLabel(dates)}</span>
                 </button>
-                <FilterChip allLabel="All Types" options={TYPES} value={type} onChange={setType} />
-                <FilterChip allLabel="All Assets" options={ASSETS} value={asset} onChange={setAsset} />
-                <FilterChip allLabel="All Status" options={STATUSES} value={status} onChange={setStatus} />
+                <FilterChip label={typesLabel(st.types)} active={st.types.length} onClick={pop("history.types")} />
+                <FilterChip label={st.asset || "All Assets"} active={st.asset} onClick={pop("history.pick", { field: "asset", all: "All Assets", options: ASSETS })} />
+                <FilterChip label={st.status || "All Status"} active={st.status} onClick={pop("history.pick", { field: "status", all: "All Status", options: STATUSES })} />
               </div>
-              <button type="button" className="pf-export hi-export">
-                <span>Export</span>
-                <img className="mono" src={aicons.download} alt="" width="18" height="18" />
-              </button>
+              <div className="hi-filters__end">
+                <SearchField />
+                <button type="button" className="pf-export hi-export" aria-haspopup="dialog" onClick={() => openFlow("history.export")}>
+                  <img className="mono" src={aicons.download} alt="" width="18" height="18" />
+                  <span>Export</span>
+                </button>
+              </div>
             </div>
             <div className="hi-title">
-              <h2 className="card-title">Recent Transaction</h2>
-              <button type="button" className="mk-chip pf-mobile-only hi-mobile-filters">
+              <h2 className="card-title">
+                Recent Transaction{filtered ? "s" : ""}
+                {filtered ? <span className="hi-title__count">{total} result{total === 1 ? "" : "s"}</span> : null}
+              </h2>
+              <button type="button" className="mk-chip pf-mobile-only hi-mobile-filters" aria-haspopup="dialog" onClick={() => openFlow("history.filters")}>
                 <span>Filters</span>
                 <img className="mono" src={micons.tune} alt="" width="18" height="18" />
               </button>
             </div>
-            <TransactionTable rows={rows} />
+            <ActiveFilters st={st} />
+            {rows.length ? <TransactionTable rows={rows} st={st} /> : <EmptyResults st={st} />}
           </div>
-          <Pagination key={`${type}${asset}${status}`} total={filtered ? rows.length : 100} />
+          {rows.length > 0 && <Pagination key={`${st.types}${st.asset}${st.status}`} total={total} />}
         </div>
       </section>
       <aside className="right-col pf-side hi-side">
