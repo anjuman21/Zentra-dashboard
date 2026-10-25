@@ -16,6 +16,7 @@ import YieldFarming from "./components/YieldFarming";
 import Automations from "./components/Automations";
 import Alerts from "./components/Alerts";
 import AiAssistant from "./components/AiAssistant";
+import { SignUp, LogIn, VerifyEmail } from "./components/Auth";
 
 function readTheme() {
   try {
@@ -27,10 +28,12 @@ function readTheme() {
 
 // Hash routes keep deep links working on static hosting (Vercel) without rewrites.
 const PAGES = ["portfolio", "markets", "trade", "analytics", "history", "staking", "yield", "automations", "alerts", "ai"];
-const TITLES = { overview: "Home", portfolio: "Portfolio", markets: "Markets", trade: "Trade", analytics: "Analytics", history: "History", staking: "Stake", yield: "Yield Farming", automations: "Automations", alerts: "Alerts", ai: "Ask Noa" };
+// Onboarding screens are full-screen: no sidebar, navbar or mobile dock.
+const ONBOARDING = { signup: SignUp, login: LogIn, "verify-email": VerifyEmail };
+const TITLES = { overview: "Home", portfolio: "Portfolio", markets: "Markets", trade: "Trade", analytics: "Analytics", history: "History", staking: "Stake", yield: "Yield Farming", automations: "Automations", alerts: "Alerts", ai: "Ask Noa", signup: "Sign up", login: "Log in", "verify-email": "Verify email" };
 const readPage = () => {
   const route = window.location.hash.replace(/^#\//, "");
-  return PAGES.includes(route) ? route : "overview";
+  return PAGES.includes(route) || ONBOARDING[route] ? route : "overview";
 };
 
 export default function App() {
@@ -80,6 +83,9 @@ export default function App() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+
+  const Onboarding = ONBOARDING[page];
+  if (Onboarding) return <Onboarding key={page} />;
 
   return (
     <div className={`app${page === "ai" ? " app--ai" : ""}`}>
