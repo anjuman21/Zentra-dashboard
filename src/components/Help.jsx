@@ -48,7 +48,7 @@ export function helpTitle(sub) {
 
 /* ───────────── Shared pieces ───────────── */
 
-function Header({ title, crumbs, small }) {
+export function Header({ title, crumbs, small }) {
   return (
     <div className="pf-header hp-header">
       <div className={`pf-header__text hp-header__text${small ? " is-small" : ""}`}>
@@ -79,7 +79,7 @@ function Chevron() {
   return <img className="mono hp-chevron" src={hicons.chevron} alt="" width="16" height="16" />;
 }
 
-function Badge({ tone, children }) {
+export function Badge({ tone, children }) {
   return <span className={`hp-badge is-${tone}`}>{children}</span>;
 }
 

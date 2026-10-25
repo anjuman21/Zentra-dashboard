@@ -31,6 +31,7 @@ import {
 } from "./components/Onboarding";
 import FinishSetup from "./components/FinishSetup";
 import Help, { helpBack, helpTitle } from "./components/Help";
+import Settings, { settingsBack, settingsTitle } from "./components/Settings";
 
 function readTheme() {
   try {
@@ -41,7 +42,7 @@ function readTheme() {
 }
 
 // Hash routes keep deep links working on static hosting (Vercel) without rewrites.
-const PAGES = ["portfolio", "markets", "trade", "analytics", "history", "staking", "yield", "automations", "alerts", "ai", "help"];
+const PAGES = ["portfolio", "markets", "trade", "analytics", "history", "staking", "yield", "automations", "alerts", "ai", "help", "settings"];
 // Onboarding screens are full-screen: no sidebar, navbar or mobile dock.
 const ONBOARDING = {
   signup: SignUp,
@@ -58,7 +59,7 @@ const ONBOARDING = {
   "deposit-pending": DepositPending,
   "all-set": AllSet,
 };
-const TITLES = { overview: "Home", portfolio: "Portfolio", markets: "Markets", trade: "Trade", analytics: "Analytics", history: "History", staking: "Stake", yield: "Yield Farming", automations: "Automations", alerts: "Alerts", ai: "Ask Noa", help: "Help & Docs", setup: "Finish setup", signup: "Sign up", login: "Log in", "verify-email": "Verify email", profile: "About you", "verify-identity": "Verify identity", "verify-id": "Upload your ID", "verify-selfie": "Take a selfie", "verify-review": "Under review", "connect-wallet": "Connect wallet", "wallet-connected": "Wallet connected", deposit: "First deposit", "deposit-pending": "Deposit on its way", "all-set": "All set" };
+const TITLES = { overview: "Home", portfolio: "Portfolio", markets: "Markets", trade: "Trade", analytics: "Analytics", history: "History", staking: "Stake", yield: "Yield Farming", automations: "Automations", alerts: "Alerts", ai: "Ask Noa", help: "Help & Docs", settings: "Settings", setup: "Finish setup", signup: "Sign up", login: "Log in", "verify-email": "Verify email", profile: "About you", "verify-identity": "Verify identity", "verify-id": "Upload your ID", "verify-selfie": "Take a selfie", "verify-review": "Under review", "connect-wallet": "Connect wallet", "wallet-connected": "Wallet connected", deposit: "First deposit", "deposit-pending": "Deposit on its way", "all-set": "All set" };
 // A route is a page plus an optional sub-path, e.g. "help/article/withdrawal-pending".
 const readRoute = () => {
   const route = window.location.hash.replace(/^#\//, "");
@@ -82,19 +83,23 @@ export default function App() {
   }, [theme]);
 
   useEffect(() => {
+    let last = window.location.hash;
     const onHash = () => {
+      const now = window.location.hash;
       setRoute(readRoute());
-      window.scrollTo(0, 0);
+      // Opening or closing a dialog route (e.g. #/settings/api/new) keeps the scroll position.
+      if (!(now.startsWith(`${last}/`) || last.startsWith(`${now}/`))) window.scrollTo(0, 0);
+      last = now;
     };
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
   useEffect(() => {
-    document.title = `Zentra — ${page === "help" ? helpTitle(sub) : TITLES[page]}`;
+    document.title = `Zentra — ${page === "help" ? helpTitle(sub) : page === "settings" ? settingsTitle(sub) : TITLES[page]}`;
   }, [page, sub]);
 
-  const back = page === "help" ? helpBack(sub) : null;
+  const back = page === "help" ? helpBack(sub) : page === "settings" ? settingsBack(sub) : null;
 
   const navigate = (route) => {
     setDrawerOpen(false);
@@ -154,6 +159,8 @@ export default function App() {
           <AiAssistant onBack={() => navigate("overview")} />
         ) : page === "help" ? (
           <Help sub={sub} />
+        ) : page === "settings" ? (
+          <Settings sub={sub} theme={theme} setTheme={setTheme} />
         ) : (
           <main className="content">
             <section className="main-col">

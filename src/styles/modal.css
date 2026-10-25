@@ -1,0 +1,115 @@
+/* Shared dialog: centred card over a blurred, whitened page (Figma "Overlay"), bottom sheet on phones. */
+
+.md-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.md-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(248, 248, 248, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: md-fade 0.18s ease;
+}
+
+:root[data-theme="dark"] .md-backdrop {
+  background: rgba(10, 10, 10, 0.6);
+}
+
+.md-dialog {
+  position: relative;
+  width: min(100%, calc(var(--md-w) + 48px));
+  max-height: calc(var(--app-h, 100vh) - 48px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  border-radius: 24px;
+  background: var(--hp-surface, #ffffff);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.03);
+  outline: none;
+  animation: md-pop 0.2s ease;
+}
+
+:root[data-theme="dark"] .md-dialog {
+  background: #1a1a1a;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.md-grabber {
+  display: none;
+}
+
+.md-close {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--hp-sunk, #f2f2f2);
+}
+
+.md-close img {
+  width: 24px;
+  height: 24px;
+}
+
+@keyframes md-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes md-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+@keyframes md-rise {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .md-backdrop,
+  .md-dialog {
+    animation: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .md-layer {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .md-dialog {
+    width: 100%;
+    max-height: calc(var(--app-h, 100dvh) - 44px);
+    padding: 12px 16px calc(16px + env(safe-area-inset-bottom));
+    border-radius: 28px 28px 0 0;
+    animation: md-rise 0.25s ease;
+  }
+
+  .md-grabber {
+    display: block;
+    width: 36px;
+    height: 5px;
+    margin: 0 auto 16px;
+    border-radius: 999px;
+    background: var(--hp-line-strong, #e6e6e6);
+  }
+}
