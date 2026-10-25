@@ -3,6 +3,7 @@ import { useFlow, closeFlow } from "../flows";
 import * as Home from "./flows/HomeFlows";
 import * as Pf from "./flows/PortfolioFlows";
 import * as Mk from "./flows/MarketsFlows";
+import * as Tr from "./flows/TradeFlows";
 
 // Every overlay the pages can open, by name.
 const FLOWS = {
@@ -29,6 +30,12 @@ const FLOWS = {
   "markets.compare": Mk.CompareCoins,
   "markets.currency": Mk.CurrencyMenu,
   "markets.fg": Mk.FearGreedExplainer,
+  "trade.pair": Tr.PairPicker,
+  "trade.type": Tr.OrderTypeMenu,
+  "trade.review": Tr.ReviewOrder,
+  "trade.order": Tr.OpenOrderMenu,
+  "trade.edit": Tr.EditOrder,
+  "trade.chart": Tr.ChartSettings,
 };
 
 export function registerFlows(map) {
