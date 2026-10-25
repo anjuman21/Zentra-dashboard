@@ -1,5 +1,8 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import { icons } from "../data";
+import { openFlow } from "../flows";
+import { anchorOf } from "./Modal";
+import { chartStore, hiddenAssets } from "../portfolioFlowData";
 import {
   picons,
   stats,
@@ -52,11 +55,11 @@ function Header() {
         </p>
       </div>
       <div className="pf-header__actions">
-        <button type="button" className="btn-primary pf-add" aria-label="Add Assets">
+        <button type="button" className="btn-primary pf-add" aria-label="Add Assets" onClick={() => openFlow("portfolio.add")}>
           <span className="pf-btn-label">Add Assets</span>
           <img src={picons.add} alt="" width="18" height="18" />
         </button>
-        <button type="button" className="pf-export" aria-label="Export">
+        <button type="button" className="pf-export" aria-label="Export" onClick={() => openFlow("portfolio.export")}>
           <span className="pf-btn-label">Export</span>
           <img className="mono" src={picons.upload} alt="" width="18" height="18" />
         </button>
@@ -85,9 +88,8 @@ function Stats() {
 }
 
 function PortfolioChart() {
-  const [range, setRange] = useState("1Y");
+  const chart = chartStore.use();
   const [plotRef, { sx, width }] = usePlotScale();
-  const cycleRange = () => setRange((r) => RANGES[(RANGES.indexOf(r) + 1) % RANGES.length]);
 
   return (
     <div className="pf-chart">
@@ -99,13 +101,18 @@ function PortfolioChart() {
             <span className="pf-chart__change up">+4.35%</span>
           </div>
         </div>
-        <button type="button" className="chip dropdown" onClick={cycleRange}>
-          <span>{range}</span>
+        <button
+          type="button"
+          className="chip dropdown"
+          aria-haspopup="dialog"
+          onClick={(e) => openFlow("portfolio.range", { anchor: anchorOf(e.currentTarget) })}
+        >
+          <span>{chart.range}</span>
           <img className="mono" src={icons.arrowDown} alt="" width="18" height="18" />
         </button>
       </div>
 
-      <div className="pf-plot" ref={plotRef} style={{ "--sx": sx }}>
+      <div className={`pf-plot${chart.potential ? "" : " no-potential"}${chart.volume ? "" : " no-volume"}`} ref={plotRef} style={{ "--sx": sx }}>
         <div className="pf-plot__layer" aria-hidden="true">
           <img className="pf-plot__bars" src={picons.chartBars} alt="" width="839" height="211" />
           <img className="pf-plot__line pf-plot__line--1" src={picons.lineBefore} alt="" width="283" height="79" />
@@ -127,10 +134,22 @@ function PortfolioChart() {
                 width="12"
                 height="10"
               />
-              <div className={`pf-tip pf-tip--${i + 1}`} style={{ left, "--tip-top": `${c.tipTop}px`, "--tip-top-m": `${c.tipTopMobile}px` }}>
+              <button
+                type="button"
+                className={`pf-tip pf-tip--btn pf-tip--${i + 1}`}
+                style={{ left, "--tip-top": `${c.tipTop}px`, "--tip-top-m": `${c.tipTopMobile}px` }}
+                onClick={(e) =>
+                  openFlow("portfolio.avp", {
+                    anchor: anchorOf(e.currentTarget),
+                    actual: c.actual.replace("$", "$"),
+                    potential: c.potential,
+                    date: i ? "Jul 28, 2026" : "Jun 14, 2026",
+                  })
+                }
+              >
                 <span className="pf-tip__actual">Actual: {c.actual}</span>
                 <span className="pf-tip__potential">Potential: {c.potential}</span>
-              </div>
+              </button>
             </React.Fragment>
           );
         })}
@@ -164,7 +183,9 @@ function PortfolioChart() {
 }
 
 function YourAssets() {
-  const last = assets.length - 1;
+  const hidden = hiddenAssets.use();
+  const rows = assets.filter((a) => !hidden.includes(a.symbol));
+  const last = rows.length - 1;
   return (
     <div className="card pf-assets">
       <div className="tx-card__header">
@@ -186,11 +207,18 @@ function YourAssets() {
             <span role="columnheader" aria-label="Actions" />
           </div>
           <div className="pf-rows">
-            {assets.map((a, i) => {
+            {rows.map((a, i) => {
               const up = !a.change.startsWith("-");
               const gain = !a.pnl.startsWith("-");
               return (
-                <div key={a.symbol} className={`pf-row${i === last ? " is-last" : ""}`} role="row">
+                <div
+                  key={a.symbol}
+                  className={`pf-row pf-row--btn${i === last ? " is-last" : ""}`}
+                  role="row"
+                  tabIndex={0}
+                  onClick={() => openFlow("portfolio.asset", { symbol: a.symbol })}
+                  onKeyDown={(e) => e.key === "Enter" && e.target === e.currentTarget && openFlow("portfolio.asset", { symbol: a.symbol })}
+                >
                   <div className="pf-cell pf-cell--asset" role="cell">
                     <img src={a.icon} alt="" width="32" height="32" />
                     <div className="pf-two">
@@ -218,7 +246,15 @@ function YourAssets() {
                     <span className="pf-cell__pct">{a.pnlPct}</span>
                   </div>
                   <div className="pf-cell pf-cell--action" role="cell">
-                    <button type="button" className="icon-btn" aria-label={`More actions for ${a.name}`}>
+                    <button
+                      type="button"
+                      className="icon-btn"
+                      aria-label={`More actions for ${a.name}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openFlow("portfolio.row", { symbol: a.symbol, anchor: anchorOf(e.currentTarget) });
+                      }}
+                    >
                       <img className="mono" src={icons.moreVert} alt="" width="18" height="18" />
                     </button>
                   </div>
@@ -232,12 +268,12 @@ function YourAssets() {
   );
 }
 
-export function CardTitle({ title, children }) {
+export function CardTitle({ title, children, onOpen }) {
   return (
     <div className="pf-card__title">
       <h2 className="card-title">{title}</h2>
       {children || (
-        <button type="button" className="pf-square" aria-label={`Open ${title}`}>
+        <button type="button" className="pf-square" aria-label={`Open ${title}`} onClick={onOpen}>
           <img className="mono" src={picons.callMade} alt="" width="18" height="18" />
         </button>
       )}
@@ -245,10 +281,10 @@ export function CardTitle({ title, children }) {
   );
 }
 
-export function Allocation({ title = "Assets Allocation" }) {
+export function Allocation({ title = "Assets Allocation", onOpen = () => openFlow("portfolio.alloc") }) {
   return (
     <div className="card pf-alloc">
-      <CardTitle title={title} />
+      <CardTitle title={title} onOpen={onOpen} />
       <div className="pf-alloc__list">
         {allocation.map((col, i) => (
           <div key={i} className="pf-alloc__col">
