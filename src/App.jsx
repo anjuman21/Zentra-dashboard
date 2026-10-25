@@ -30,6 +30,7 @@ import {
   AllSet,
 } from "./components/Onboarding";
 import FinishSetup from "./components/FinishSetup";
+import Help, { helpBack, helpTitle } from "./components/Help";
 
 function readTheme() {
   try {
@@ -40,7 +41,7 @@ function readTheme() {
 }
 
 // Hash routes keep deep links working on static hosting (Vercel) without rewrites.
-const PAGES = ["portfolio", "markets", "trade", "analytics", "history", "staking", "yield", "automations", "alerts", "ai"];
+const PAGES = ["portfolio", "markets", "trade", "analytics", "history", "staking", "yield", "automations", "alerts", "ai", "help"];
 // Onboarding screens are full-screen: no sidebar, navbar or mobile dock.
 const ONBOARDING = {
   signup: SignUp,
@@ -57,15 +58,18 @@ const ONBOARDING = {
   "deposit-pending": DepositPending,
   "all-set": AllSet,
 };
-const TITLES = { overview: "Home", portfolio: "Portfolio", markets: "Markets", trade: "Trade", analytics: "Analytics", history: "History", staking: "Stake", yield: "Yield Farming", automations: "Automations", alerts: "Alerts", ai: "Ask Noa", setup: "Finish setup", signup: "Sign up", login: "Log in", "verify-email": "Verify email", profile: "About you", "verify-identity": "Verify identity", "verify-id": "Upload your ID", "verify-selfie": "Take a selfie", "verify-review": "Under review", "connect-wallet": "Connect wallet", "wallet-connected": "Wallet connected", deposit: "First deposit", "deposit-pending": "Deposit on its way", "all-set": "All set" };
-const readPage = () => {
+const TITLES = { overview: "Home", portfolio: "Portfolio", markets: "Markets", trade: "Trade", analytics: "Analytics", history: "History", staking: "Stake", yield: "Yield Farming", automations: "Automations", alerts: "Alerts", ai: "Ask Noa", help: "Help & Docs", setup: "Finish setup", signup: "Sign up", login: "Log in", "verify-email": "Verify email", profile: "About you", "verify-identity": "Verify identity", "verify-id": "Upload your ID", "verify-selfie": "Take a selfie", "verify-review": "Under review", "connect-wallet": "Connect wallet", "wallet-connected": "Wallet connected", deposit: "First deposit", "deposit-pending": "Deposit on its way", "all-set": "All set" };
+// A route is a page plus an optional sub-path, e.g. "help/article/withdrawal-pending".
+const readRoute = () => {
   const route = window.location.hash.replace(/^#\//, "");
-  return PAGES.includes(route) || ONBOARDING[route] || route === "setup" ? route : "overview";
+  const [head, ...rest] = route.split("/");
+  if (PAGES.includes(head)) return { page: head, sub: rest.join("/") };
+  return { page: ONBOARDING[route] || route === "setup" ? route : "overview", sub: "" };
 };
 
 export default function App() {
   const [theme, setTheme] = useState(readTheme);
-  const [page, setPage] = useState(readPage);
+  const [{ page, sub }, setRoute] = useState(readRoute);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
@@ -79,7 +83,7 @@ export default function App() {
 
   useEffect(() => {
     const onHash = () => {
-      setPage(readPage());
+      setRoute(readRoute());
       window.scrollTo(0, 0);
     };
     window.addEventListener("hashchange", onHash);
@@ -87,8 +91,10 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    document.title = `Zentra — ${TITLES[page]}`;
-  }, [page]);
+    document.title = `Zentra — ${page === "help" ? helpTitle(sub) : TITLES[page]}`;
+  }, [page, sub]);
+
+  const back = page === "help" ? helpBack(sub) : null;
 
   const navigate = (route) => {
     setDrawerOpen(false);
@@ -124,7 +130,7 @@ export default function App() {
 
       <div className="main-area">
         <Navbar onMenu={() => setDrawerOpen(true)} />
-        <MobileTopbar onMenu={() => setDrawerOpen(true)} />
+        <MobileTopbar onMenu={() => setDrawerOpen(true)} back={back} onBack={() => back && navigate(back.route)} />
 
         {page === "portfolio" ? (
           <Portfolio />
@@ -146,6 +152,8 @@ export default function App() {
           <Alerts />
         ) : page === "ai" ? (
           <AiAssistant onBack={() => navigate("overview")} />
+        ) : page === "help" ? (
+          <Help sub={sub} />
         ) : (
           <main className="content">
             <section className="main-col">

@@ -76,7 +76,13 @@ export default function MobileMenu({ page, onNavigate, open, onClose, theme, onT
 
         <div className="m-menu__links m-menu__links--small">
           {footerLinks.map((item) => (
-            <NavLink key={item.label} item={item} small active={false} onClick={() => select(item.label)} />
+            <NavLink
+              key={item.label}
+              item={item}
+              small
+              active={item.route === page}
+              onClick={() => (item.route ? onNavigate(item.route) : select(item.label))}
+            />
           ))}
           <button type="button" className="nav-link is-small theme-toggle" onClick={onToggleTheme} aria-pressed={dark}>
             <span className="nav-link__inner">

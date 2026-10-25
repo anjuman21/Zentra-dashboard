@@ -1,0 +1,34 @@
+<svg width="298" height="251" viewBox="0 0 298 251" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_689_67137" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="-30" y="-72" width="357" height="371">
+<line x1="8.71705" y1="-72" x2="8.71704" y2="298.864" stroke="white" stroke-width="0.371608"/>
+<line x1="39.9319" y1="-72" x2="39.9319" y2="298.864" stroke="white" stroke-width="0.371608"/>
+<line x1="326.627" y1="21.4592" x2="-29.0014" y2="21.4592" stroke="white" stroke-width="0.371608"/>
+<line x1="71.1487" y1="-72" x2="71.1487" y2="298.864" stroke="white" stroke-width="0.371608"/>
+<line x1="326.627" y1="52.6751" x2="-29.0014" y2="52.675" stroke="white" stroke-width="0.371608"/>
+<line x1="102.364" y1="-72" x2="102.364" y2="298.864" stroke="white" stroke-width="0.371608"/>
+<line x1="326.627" y1="83.8899" x2="-29.0014" y2="83.8899" stroke="white" stroke-width="0.371608"/>
+<line x1="133.576" y1="-72" x2="133.576" y2="298.864" stroke="white" stroke-width="0.371608"/>
+<line x1="326.627" y1="115.105" x2="-29.0014" y2="115.105" stroke="white" stroke-width="0.371608"/>
+<line x1="164.793" y1="-72" x2="164.793" y2="298.864" stroke="white" stroke-width="0.371608"/>
+<line x1="326.627" y1="146.32" x2="-29.0014" y2="146.32" stroke="white" stroke-width="0.371608"/>
+<line x1="196.008" y1="-72" x2="196.008" y2="298.864" stroke="white" stroke-width="0.371608"/>
+<line x1="326.627" y1="177.535" x2="-29.0014" y2="177.535" stroke="white" stroke-width="0.371608"/>
+<line x1="227.223" y1="-72" x2="227.223" y2="298.864" stroke="white" stroke-width="0.371608"/>
+<line x1="326.627" y1="208.749" x2="-29.0014" y2="208.749" stroke="white" stroke-width="0.371608"/>
+<line x1="258.438" y1="-72" x2="258.438" y2="298.864" stroke="white" stroke-width="0.371608"/>
+<line x1="326.627" y1="239.965" x2="-29.0014" y2="239.965" stroke="white" stroke-width="0.371608"/>
+<line x1="289.653" y1="-72" x2="289.653" y2="298.864" stroke="white" stroke-width="0.371608"/>
+</mask>
+<g mask="url(#mask0_689_67137)">
+<g filter="url(#filter0_f_689_67137)">
+<ellipse cx="149.372" cy="54.1614" rx="70.977" ry="43.2923" fill="black" fill-opacity="0.1"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_f_689_67137" x="22.6534" y="-44.872" width="253.435" height="198.067" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="27.8706" result="effect1_foregroundBlur_689_67137"/>
+</filter>
+</defs>
+</svg>

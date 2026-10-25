@@ -49,13 +49,23 @@ export default function Navbar({ onMenu }) {
   );
 }
 
-export function MobileTopbar({ onMenu }) {
+// Inner pages swap the menu pill for a back arrow and the parent page's name.
+export function MobileTopbar({ onMenu, back, onBack }) {
   return (
     <header className="m-topbar">
-      <button type="button" className="m-pill" onClick={onMenu}>
-        <img className="mono" src={icons.mMenu} alt="" width="18" height="18" />
-        <span>Zentra</span>
-      </button>
+      {back ? (
+        <div className="m-back">
+          <button type="button" className="m-circle" aria-label={`Back to ${back.label}`} onClick={onBack}>
+            <img className="mono" src="/assets/hp-back.svg" alt="" width="20" height="20" />
+          </button>
+          <span className="m-back__label">{back.label}</span>
+        </div>
+      ) : (
+        <button type="button" className="m-pill" onClick={onMenu}>
+          <img className="mono" src={icons.mMenu} alt="" width="18" height="18" />
+          <span>Zentra</span>
+        </button>
+      )}
       <div className="m-topbar__actions">
         <button type="button" className="m-circle" aria-label="Notifications">
           <img className="mono" src={icons.notifications} alt="" width="18" height="18" />

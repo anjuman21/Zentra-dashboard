@@ -57,14 +57,16 @@ function SetupCard({ onOpen }) {
 
 export default function Sidebar({ page, onNavigate, open, onClose, theme, onToggleTheme }) {
   const routed = [...mainMenu, ...financeOps].find((m) => m.route === page);
-  const [active, setActive] = useState(routed ? routed.label : page === "ai" ? null : "Overview");
+  // Footer pages (Help, Settings) highlight their own link instead of a menu item.
+  const footerPage = footerLinks.some((f) => f.route === page);
+  const [active, setActive] = useState(routed ? routed.label : page === "ai" || footerPage ? null : "Overview");
   const dark = theme === "dark";
 
   // Routed items follow the URL; the rest only highlight locally.
   useEffect(() => {
     if (routed) setActive(routed.label);
-    else if (page === "ai") setActive(null);
-  }, [routed, page]);
+    else if (page === "ai" || footerPage) setActive(null);
+  }, [routed, page, footerPage]);
 
   const select = (label) => {
     const item = [...mainMenu, ...financeOps].find((m) => m.label === label);
@@ -132,7 +134,13 @@ export default function Sidebar({ page, onNavigate, open, onClose, theme, onTogg
             <SetupCard onOpen={() => onNavigate("setup")} />
             <div className="menu__links">
               {footerLinks.map((item) => (
-                <NavLink key={item.label} item={item} small active={false} onClick={() => select(item.label)} />
+                <NavLink
+                  key={item.label}
+                  item={item}
+                  small
+                  active={item.route === page}
+                  onClick={() => (item.route ? onNavigate(item.route) : select(item.label))}
+                />
               ))}
               <button type="button" className="nav-link is-small theme-toggle" onClick={onToggleTheme} aria-pressed={dark}>
                 <span className="nav-link__inner">

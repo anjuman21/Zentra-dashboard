@@ -66,7 +66,7 @@ export const financeOps = [
 ];
 
 export const footerLinks = [
-  { label: "Help & Docs", icon: a("assignment.svg") },
+  { label: "Help & Docs", route: "help", icon: a("assignment.svg"), activeIcon: a("portfolio-active.svg") },
   { label: "Settings", icon: a("insert-chart.svg") },
 ];
 
