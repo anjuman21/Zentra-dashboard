@@ -49,7 +49,8 @@ function SearchField() {
   }, [open]);
   const setQuery = (query) => historyStore.set((s) => ({ ...s, query }));
   return (
-    <div className="hi-search" ref={box}>
+    <div className={`hi-search${open && st.query.trim() ? " is-open" : ""}`} ref={box}>
+      {open && st.query.trim() && <div className="nv-backdrop hi-search__backdrop" aria-hidden="true" />}
       <label className={`hi-search__field${open || st.query ? " is-focus" : ""}`}>
         <img className="mono" src={icons.search} alt="" width="18" height="18" />
         <input

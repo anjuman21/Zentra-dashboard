@@ -4036,6 +4036,20 @@ label.fl-menu__item {
   position: relative;
 }
 
+/* Open search sits above the page dim, like every other popup. */
+.hi-search.is-open {
+  z-index: 81;
+}
+
+.hi-search__backdrop {
+  z-index: 0;
+}
+
+.hi-search.is-open .hi-search__field {
+  position: relative;
+  z-index: 1;
+}
+
 .hi-search__field {
   width: 150px;
   height: 34px;
