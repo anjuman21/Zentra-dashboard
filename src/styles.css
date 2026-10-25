@@ -1843,7 +1843,9 @@ input:focus-visible {
     position: fixed;
     inset: 0;
     z-index: 40;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
   }
 
   .navbar__menu {
@@ -2887,8 +2889,8 @@ input:focus-visible {
     z-index: 60;
     display: block;
     background: rgba(0, 0, 0, 0.25);
-    -webkit-backdrop-filter: blur(5px);
-    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s ease, visibility 0s linear 0.2s;
@@ -10420,9 +10422,9 @@ button.au-pill:hover {
 .fs-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.16);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   animation: fs-fade 0.25s ease;
 }
 

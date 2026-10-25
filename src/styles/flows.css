@@ -1512,9 +1512,9 @@
   position: fixed;
   inset: 0;
   z-index: 80;
-  background: rgba(248, 248, 248, 0.55);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
 }
 
 :root[data-theme="dark"] .nv-backdrop {
@@ -4034,6 +4034,20 @@ label.fl-menu__item {
 
 .hi-search {
   position: relative;
+}
+
+/* Open search sits above the page dim, like every other popup. */
+.hi-search.is-open {
+  z-index: 81;
+}
+
+.hi-search__backdrop {
+  z-index: 0;
+}
+
+.hi-search.is-open .hi-search__field {
+  position: relative;
+  z-index: 1;
 }
 
 .hi-search__field {
