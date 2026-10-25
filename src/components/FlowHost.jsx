@@ -7,6 +7,7 @@ import * as Tr from "./flows/TradeFlows";
 import * as An from "./flows/AnalyticsFlows";
 import * as Hi from "./flows/HistoryFlows";
 import * as St from "./flows/StakeFlows";
+import * as Yf from "./flows/YieldFlows";
 
 // Every overlay the pages can open, by name.
 const FLOWS = {
@@ -62,6 +63,14 @@ const FLOWS = {
   "stake.rewards": St.ClaimRewards,
   "stake.apy": St.ApyExplainer,
   "stake.breakdown": St.StakeBreakdown,
+  "yield.add": Yf.AddLiquidity,
+  "yield.position": Yf.PositionDetail,
+  "yield.remove": Yf.RemoveLiquidity,
+  "yield.claim": Yf.ClaimYield,
+  "yield.oor": Yf.OutOfRange,
+  "yield.risk": Yf.PoolRisk,
+  "yield.range": Yf.YieldRange,
+  "yield.menu": Yf.PositionMenu,
 };
 
 export function registerFlows(map) {

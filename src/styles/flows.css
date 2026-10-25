@@ -5654,3 +5654,639 @@ label.fl-menu__item {
     height: 44px;
   }
 }
+
+/* ═════════════ Yield Farming flows (Figma 491:56678) ═════════════ */
+
+/* Page */
+.yf-row.is-clickable {
+  cursor: pointer;
+}
+
+.yf-row.is-clickable:hover {
+  background: var(--hp-sunk);
+}
+
+.yf-oor {
+  font: inherit;
+  line-height: 1.15;
+  text-align: left;
+  color: var(--orange);
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+}
+
+button.yf-risk {
+  align-self: flex-start;
+  font-family: inherit;
+  text-align: left;
+  text-decoration: underline dotted transparent;
+  text-underline-offset: 2px;
+}
+
+button.yf-risk:hover {
+  text-decoration-color: currentColor;
+}
+
+.yf-risk.is-high {
+  color: var(--error);
+}
+
+/* Shared */
+.yfl-pair {
+  flex-shrink: 0;
+}
+
+.yfl-range {
+  position: relative;
+  padding-right: 0;
+  border-radius: 12px;
+  background: var(--hp-sunk);
+  overflow: hidden;
+}
+
+.yfl-range svg {
+  width: 100%;
+  height: 96px;
+  display: block;
+}
+
+.yfl-oor .yfl-range svg {
+  height: 86px;
+}
+
+.yfl-range__hi,
+.yfl-range__lo {
+  position: absolute;
+  right: 6px;
+  font-size: 11px;
+  color: var(--success);
+}
+
+.yfl-range__dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 999px;
+  background: #5720f5;
+  box-shadow: 0 0 0 2px var(--hp-surface);
+}
+
+.yfl-range__dot.is-out {
+  background: var(--orange);
+}
+
+.yfl-range__tip {
+  position: absolute;
+  transform: translateX(-60%);
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--text-1);
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--hp-surface);
+}
+
+.yfl-range__x {
+  display: flex;
+  justify-content: space-between;
+  padding-right: 52px;
+  font-size: 11px;
+  color: var(--text-2);
+}
+
+.yfl-rows .fl-row {
+  font-size: 13px;
+}
+
+.yfl-rows .fl-row__value {
+  font-weight: 500;
+  color: var(--text-1);
+}
+
+.yfl-danger,
+.ob-btn--ghost.yfl-danger {
+  color: var(--error);
+}
+
+.btn-primary.yfl-btn-danger {
+  background: var(--error);
+  box-shadow: none;
+}
+
+.yfl-orange {
+  color: var(--orange);
+}
+
+/* 01A · add liquidity */
+.yfl-add {
+  gap: 18px;
+}
+
+.yfl-tokens {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.yfl-token {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--hp-sunk);
+  cursor: text;
+}
+
+.yfl-token.is-error {
+  box-shadow: inset 0 0 0 1px var(--error);
+}
+
+.yfl-token__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.yfl-token__amt {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.yfl-token__amt input {
+  width: 100%;
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  padding: 0;
+  background: none;
+  font: inherit;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.yfl-token__bal {
+  margin-top: 8px;
+}
+
+.yfl-balance {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.yfl-balance__bar {
+  display: flex;
+  gap: 4px;
+  height: 6px;
+}
+
+.yfl-balance__bar span {
+  flex: 1;
+  border-radius: 999px;
+  background: #627eea;
+}
+
+.yfl-balance__bar span + span {
+  background: #0379df;
+}
+
+.yfl-balance__labels {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-2);
+}
+
+.yfl-auto {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(87, 32, 245, 0.1);
+  font-weight: 500;
+  color: var(--hp-brand);
+}
+
+.yfl-warn {
+  font-size: 12px;
+  color: var(--orange);
+}
+
+/* 02A · position */
+.yfl-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  border-radius: 16px;
+  background: #5720f5;
+  color: #fff;
+}
+
+.yfl-hero__value {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.yfl-hero__sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.yfl-chip {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  font-weight: 500;
+  color: #fff;
+}
+
+.yfl-split {
+  height: 6px;
+  display: flex;
+  gap: 4px;
+}
+
+.yfl-split span {
+  border-radius: 999px;
+}
+
+.yfl-earning {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(72, 177, 135, 0.12);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--success);
+}
+
+.yfl-earning.is-out {
+  background: rgba(254, 119, 1, 0.12);
+  color: var(--orange);
+}
+
+.yfl-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+}
+
+.yfl-actions > .ob-btn {
+  height: 48px;
+}
+
+/* 02B / 02C · remove */
+.yfl-remove {
+  gap: 16px;
+}
+
+.yfl-amount {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  background: var(--hp-sunk);
+  --yfl-c: #5720f5;
+}
+
+.yfl-amount.is-full {
+  --yfl-c: var(--error);
+}
+
+.yfl-amount__label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--text-2);
+}
+
+.yfl-amount__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.yfl-amount__pct {
+  font-size: 34px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.yfl-amount input[type="range"] {
+  width: 100%;
+  height: 20px;
+  margin: 0;
+  appearance: none;
+  background: linear-gradient(var(--yfl-c), var(--yfl-c)) 0 50% / var(--p) 4px no-repeat, linear-gradient(var(--hp-line-strong), var(--hp-line-strong)) 0 50% / 100% 4px no-repeat;
+  cursor: pointer;
+}
+
+.yfl-amount input[type="range"]::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+  appearance: none;
+  border-radius: 999px;
+  background: var(--hp-surface);
+  box-shadow: inset 0 0 0 4px var(--yfl-c);
+}
+
+.yfl-amount input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--hp-surface);
+  box-shadow: inset 0 0 0 4px var(--yfl-c);
+}
+
+.yfl-presets {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.yfl-presets button {
+  height: 30px;
+  border-radius: 999px;
+  background: var(--hp-surface);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-1);
+}
+
+.yfl-presets button.is-on {
+  background: var(--yfl-c);
+  color: #fff;
+}
+
+.yfl-close-warn {
+  display: flex;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(248, 42, 81, 0.08);
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--text-2);
+}
+
+.yfl-close-warn img {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.yfl-close-warn strong {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--error);
+}
+
+.yfl-receive .sf-claim {
+  cursor: default;
+}
+
+.yfl-muted {
+  font-weight: 400;
+  color: var(--text-2);
+}
+
+/* 03A · claim */
+.yfl-claim {
+  gap: 16px;
+}
+
+.yfl-total {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 20px;
+  border-radius: 16px;
+  background: rgba(87, 32, 245, 0.08);
+  text-align: center;
+}
+
+.yfl-total__value {
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.yfl-explain {
+  margin: 0;
+  line-height: 15px;
+}
+
+/* 04A · out of range */
+.yfl-oor {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.yfl-oor .hf-status__head .fl-coin__name {
+  flex: 1;
+}
+
+.yfl-legend {
+  display: flex;
+  gap: 16px;
+  font-size: 11px;
+  color: var(--text-2);
+}
+
+.yfl-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.yfl-oor .hf-status__actions .ob-btn,
+.yfl-oor > .ob-btn {
+  height: 40px;
+  font-size: 14px;
+}
+
+/* 05A · risk */
+.yfl-risk {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.yfl-risk .hf-status__head .fl-coin__name {
+  flex: 1;
+}
+
+.yfl-risk__lvl.is-0 {
+  color: var(--success);
+}
+
+.yfl-risk__lvl.is-1 {
+  color: var(--orange);
+}
+
+.yfl-risk__lvl.is-2 {
+  color: var(--error);
+}
+
+.yfl-meter {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.yfl-meter__seg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-2);
+}
+
+.yfl-meter__seg > span {
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  opacity: 0.25;
+}
+
+.yfl-meter__seg.is-0 > span {
+  background: var(--success);
+}
+
+.yfl-meter__seg.is-1 > span {
+  background: var(--orange);
+}
+
+.yfl-meter__seg.is-2 > span {
+  background: var(--error);
+}
+
+.yfl-meter__seg.is-on {
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.yfl-meter__seg.is-on > span {
+  opacity: 1;
+}
+
+.yfl-il {
+  position: relative;
+  margin-right: 40px;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.yfl-il svg {
+  width: 100%;
+  height: 96px;
+  display: block;
+}
+
+.yfl-il__dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 999px;
+  background: var(--error);
+  box-shadow: 0 0 0 2px var(--hp-surface);
+  pointer-events: none;
+}
+
+.yfl-il__tip {
+  position: absolute;
+  transform: translateX(-50%);
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--text-1);
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--hp-surface);
+  pointer-events: none;
+}
+
+.yfl-il__y {
+  position: absolute;
+  top: 0;
+  right: -40px;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-2);
+}
+
+.yfl-il__x {
+  padding-right: 40px;
+}
+
+/* 06A · yield range */
+.yfl-yield {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+}
+
+.yfl-yield__total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.yfl-yield .sf-split {
+  margin-top: 0;
+}
+
+.yfl-share {
+  padding: 2px 0;
+}
+
+.yfl-note {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--hp-sunk);
+  font-size: 11px;
+  line-height: 15px;
+  color: var(--text-2);
+}
+
+.yfl-note img {
+  flex-shrink: 0;
+}
+
+.yfl-yield .hf-seg button {
+  font-size: 13px;
+}
+
+@media (max-width: 767px) {
+  .yfl-token__amt input {
+    font-size: 18px;
+  }
+}
