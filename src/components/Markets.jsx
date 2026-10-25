@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import StatSpark from "./StatSpark";
 import { icons } from "../data";
 import { Allocation, CardTitle } from "./Portfolio";
 import {
@@ -67,7 +68,7 @@ export function Stats({ items = marketStats }) {
               <span className={`kpi__change ${s.tone || (s.change.startsWith("-") ? "down" : "up")}`}>{s.change}</span>
             </div>
           </div>
-          <img className="pf-stat__spark" src={s.spark} alt="" width="183" height="36" />
+          <StatSpark src={s.spark} value={s.value} />
         </div>
       ))}
     </div>

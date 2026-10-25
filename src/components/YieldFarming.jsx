@@ -1,4 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
+import ChartHover, { dateAt } from "./ChartHover";
 import { icons } from "../data";
 import { picons } from "../portfolioData";
 import { sicons } from "../stakeData";
@@ -209,6 +210,19 @@ function YourYield() {
         <img className="yf-yield__chart" src={yicons.chart} alt="" width="225" height="130" />
         <span className="yf-yield__cursor" />
         <img className="yf-yield__dot" src="/assets/chart-dot.svg" alt="" width="10" height="10" />
+        <ChartHover
+          images=".yf-yield__chart"
+          colors={["#FE7701"]}
+          plot=".yf-yield__chart"
+          range={[500, 0]}
+          span=".yf-yield__chart"
+          pill={false}
+          tipWidth={128}
+          render={(h) => ({
+            date: dateAt(h.frac, new Date(2026, 8, 19), new Date(2026, 9, 19)),
+            rows: [{ label: "Earned", color: "#FE7701", value: h.v[0] == null ? "—" : `$${h.v[0].toFixed(2)}`, tone: "up" }],
+          })}
+        />
         <div className="yf-yield__months">
           {yieldMonths.map((m) => (
             <span key={m} className={m === "Oct 14" ? "is-active" : ""}>

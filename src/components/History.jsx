@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import StatSpark from "./StatSpark";
+import ChartHover, { dateAt } from "./ChartHover";
 import { icons } from "../data";
 import { micons } from "../marketsData";
 import { aicons } from "../analyticsData";
@@ -154,7 +156,7 @@ function Stats() {
               <span className="kpi__change up">{s.change}</span>
             </div>
           </div>
-          <img className="pf-stat__spark" src={s.spark} alt="" width="183" height="36" />
+          <StatSpark src={s.spark} value={s.value} />
         </div>
       ))}
     </div>
@@ -290,6 +292,19 @@ function BalanceTrend() {
             <span key={l}>{l}</span>
           ))}
         </div>
+        <ChartHover
+          images=".hi-trend__chart"
+          colors={["#FE7701", "#BABABA"]}
+          merge
+          axis=".hi-trend__y span"
+          values={[2.6, 2.4, 2.2, 2.0, 1.8]}
+          span=".hi-trend__months"
+          tipWidth={128}
+          render={(h) => ({
+            date: dateAt(h.frac, new Date(2026, 3, 1), new Date(2026, 9, 31)),
+            rows: [{ label: h.tones[0] === "#BABABA" ? "Forecast" : "Balance", color: h.tones[0], value: h.v[0] == null ? "—" : `$${h.v[0].toFixed(2)}T` }],
+          })}
+        />
       </div>
     </div>
   );

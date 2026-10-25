@@ -1,4 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
+import StatSpark from "./StatSpark";
+import ChartHover, { dateAt } from "./ChartHover";
 import { icons } from "../data";
 import { picons, RULER_TICKS, rulerMajor } from "../portfolioData";
 import {
@@ -101,7 +103,7 @@ function Kpis() {
               <span className={`kpi__number pf-stat__number an-kpi ${k.tone}`}>{k.value}</span>
             </div>
           </div>
-          <img className="pf-stat__spark" src={k.spark} alt="" width="183" height="36" />
+          <StatSpark src={k.spark} value={k.value} />
         </div>
       ))}
     </div>
@@ -212,6 +214,21 @@ function PerformanceChart() {
           </div>
         </div>
         <span className="date-pill an-pill">Tue, Sep 04 ‘26</span>
+        <ChartHover
+          images=".an-graph__line-img"
+          colors={["#FE7701"]}
+          axis=".an-graph__label"
+          values={[42000, 40000, 38000, 36000, 34000]}
+          span=".an-timeline"
+          tipWidth={170}
+          render={(h) => ({
+            date: dateAt(h.frac, new Date(2026, 3, 1), new Date(2026, 9, 31)),
+            rows: [
+              { label: "Portfolio", color: "#FE7701", value: h.v[0] == null ? "—" : `$${Math.round(h.v[0]).toLocaleString("en-US")}` },
+              { label: "vs Apr 01", value: h.v[0] == null ? "—" : `${h.v[0] >= 37550 ? "+" : "−"}${(Math.abs(h.v[0] - 37550) / 375.5).toFixed(2)}%`, tone: h.v[0] >= 37550 ? "up" : "down" },
+            ],
+          })}
+        />
       </div>
     </div>
   );
