@@ -3,7 +3,7 @@ import { icons } from "../data";
 import { anchorOf } from "./Modal";
 import { openFlow } from "../flows";
 import { aiicons, suggestions } from "../aiData";
-import { aiStore, ask, newChat, ChatList, CONTEXTS } from "./flows/AiFlows";
+import { aiStore, ask, ChatList, CONTEXTS } from "./flows/AiFlows";
 
 const pop = (name, props) => (e) => openFlow(name, { anchor: anchorOf(e.currentTarget), ...props });
 
@@ -336,7 +336,7 @@ export default function AiAssistant({ onBack }) {
   const st = aiStore.use();
   const messages = (st.active && st.threads[st.active]) || [];
   const chatting = messages.length > 0;
-  // ⌘K jumps to chat search; leaving the page starts fresh next time.
+  // ⌘K jumps to chat search.
   useEffect(() => {
     const key = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -345,10 +345,7 @@ export default function AiAssistant({ onBack }) {
       }
     };
     window.addEventListener("keydown", key);
-    return () => {
-      window.removeEventListener("keydown", key);
-      newChat();
-    };
+    return () => window.removeEventListener("keydown", key);
   }, []);
 
   return (

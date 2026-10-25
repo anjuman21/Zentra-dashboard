@@ -602,6 +602,28 @@
 .fl-chart {
   position: relative;
   flex-shrink: 0;
+  cursor: crosshair;
+  touch-action: pan-y;
+}
+
+.fl-chart__dot {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 999px;
+  background: var(--c);
+  box-shadow: 0 0 0 1.5px #fff;
+  pointer-events: none;
+}
+
+.fl-chart.is-hovering .fl-chart__dot {
+  box-shadow: 0 0 0 2px #fff, 0 0 0 5px color-mix(in srgb, var(--c) 22%, transparent);
+}
+
+.fl-chart__when {
+  font-weight: 400;
+  opacity: 0.7;
 }
 
 .fl-chart svg {
@@ -8101,4 +8123,227 @@ button.yf-risk:hover {
 
 .fl-logout .fl-actions {
   width: 100%;
+}
+
+/* ═════════════ Screen error (safety net) ═════════════ */
+
+.screen-error {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 48px;
+}
+
+.screen-error__card {
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 32px;
+  text-align: center;
+}
+
+.screen-error__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.screen-error__text {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.screen-error__code {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--hp-sunk);
+  font-size: 12px;
+  color: var(--error);
+  word-break: break-word;
+}
+
+.screen-error__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* ═════════════ Chart hover (ChartHover.jsx) ═════════════ */
+
+.ch-anchor {
+  display: none;
+}
+
+.ch-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+}
+
+.ch-cursor {
+  position: absolute;
+  width: 0;
+  border-left: 1px dashed var(--text-2);
+  transform: translateX(-0.5px);
+}
+
+.ch-hline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 1px dashed var(--text-2);
+  opacity: 0.6;
+}
+
+.ch-dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 999px;
+  background: var(--c);
+  box-shadow: 0 0 0 2px var(--raised, #fff), 0 0 0 5px color-mix(in srgb, var(--c) 22%, transparent);
+  transition: top 60ms linear;
+}
+
+.ch-pill {
+  position: absolute;
+  transform: translateX(-50%);
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px;
+  border-radius: 50px;
+  background: var(--date-pill, #1e1e1e);
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: -0.33px;
+  white-space: nowrap;
+  color: #fff;
+}
+
+.ch-tip {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--raised, #fff);
+  filter: drop-shadow(3px 6px 6px rgba(0, 0, 0, 0.16));
+  transition: left 80ms ease-out, top 80ms ease-out;
+}
+
+.ch-tip__date {
+  font-size: 12px;
+  letter-spacing: -0.36px;
+  color: var(--text-1);
+}
+
+.ch-tip__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ch-tip__key {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--text-2);
+}
+
+.ch-tip__key i {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+}
+
+.ch-tip__value {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-1);
+  white-space: nowrap;
+}
+
+.ch-tip__value.is-up {
+  color: var(--success);
+}
+
+.ch-tip__value.is-down {
+  color: var(--error);
+}
+
+.ch-tip__value.is-blue {
+  color: var(--blue);
+}
+
+.ch-tip__value.is-orange {
+  color: var(--orange);
+}
+
+.ch-tip__value.is-grey {
+  color: var(--volume, var(--text-2));
+}
+
+.ch-dot--sm {
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+}
+
+.ch-mini {
+  position: absolute;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #121212;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: #fff;
+}
+
+.ch-mini__date {
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.pf-stat {
+  position: relative;
+}
+
+.pf-stat:hover .pf-stat__spark {
+  cursor: crosshair;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ch-dot,
+  .ch-tip {
+    transition: none;
+  }
+}
+
+/* While hovering, each chart's fixed design-state cursor, dots and tooltip step aside. */
+.graph.is-hovering :is(.series__cursor, .series__dot.is-cursor, .date-pill, .tooltip),
+.m-graph.is-hovering :is(.m-graph__cursor, .m-graph__dot, .m-graph__pill, .m-graph__tooltip),
+.pf-plot.is-hovering :is(.pf-tip, .pf-marker),
+.tr-plot.is-hovering :is(.tr-plot__hline, .tr-plot__vline, .tr-plot__dot, .tr-tip),
+.an-graph.is-hovering :is(.an-graph__cursor, .an-graph__dot, .an-pill),
+.hi-trend__graph.is-hovering :is(.hi-trend__cursor, .hi-trend__dot, .hi-tip),
+.yf-yield__graph.is-hovering :is(.yf-yield__cursor, .yf-yield__dot) {
+  visibility: hidden;
+}
+
+:is(.graph, .m-graph, .pf-plot, .tr-plot, .an-graph, .hi-trend__graph, .yf-yield__graph) {
+  cursor: crosshair;
+  touch-action: pan-y;
 }

@@ -27,6 +27,7 @@ export const ficons = {
   shield: a("st-encrypted.svg"),
   language: a("language.svg"),
   logout: a("logout.svg"),
+  expand: a("open-in-full.svg"),
   add: a("add.svg"),
   mic: a("i-mic.svg"),
   send: a("i-north-east.svg"),

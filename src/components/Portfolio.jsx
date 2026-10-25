@@ -1,4 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
+import StatSpark from "./StatSpark";
+import ChartHover, { dateAt } from "./ChartHover";
 import { icons } from "../data";
 import { openFlow } from "../flows";
 import { anchorOf } from "./Modal";
@@ -80,7 +82,7 @@ function Stats() {
               <span className="kpi__change up">{s.change}</span>
             </div>
           </div>
-          <img className="pf-stat__spark" src={s.spark} alt="" width="183" height="36" />
+          <StatSpark src={s.spark} value={s.value} />
         </div>
       ))}
     </div>
@@ -154,6 +156,22 @@ function PortfolioChart() {
           );
         })}
 
+        <ChartHover
+          images=".pf-plot__line"
+          colors={["#0379DF", "#FE7701"]}
+          merge
+          plot=".pf-plot__bars"
+          range={[130000, 100000]}
+          span=".pf-dates"
+          tipWidth={170}
+          render={(h) => ({
+            date: dateAt(h.frac, new Date(2026, 3, 1), new Date(2026, 9, 31)),
+            rows: [
+              { label: "Portfolio", color: h.tones[0], value: h.v[0] == null ? "—" : `$${Math.round(h.v[0]).toLocaleString("en-US")}` },
+              { label: "vs Apr 01", value: h.v[0] == null ? "—" : `${h.v[0] >= 112000 ? "+" : "−"}${(Math.abs(h.v[0] - 112000) / 1120).toFixed(2)}%`, tone: h.v[0] >= 112000 ? "up" : "down" },
+            ],
+          })}
+        />
         <div className="pf-dates">
           <div className="timeline__labels pf-dates__labels">
             {chartMonths.map((m) => (

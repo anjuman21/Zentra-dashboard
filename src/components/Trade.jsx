@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import ChartHover, { dateAt } from "./ChartHover";
 import { icons, graphTools } from "../data";
 import { micons } from "../marketsData";
 import { CardTitle } from "./Portfolio";
@@ -194,6 +195,19 @@ function PriceChart() {
             <span className="tr-tip__change up">+3.45%</span>
           </span>
         </div>
+        <ChartHover
+          images=".tr-plot__chart"
+          colors={["#FE7701"]}
+          axis=".tr-plot__y span"
+          values={[150, 120, 91, 60, 30, 20, 0]}
+          span=".tr-plot__x"
+          crosshair
+          tipWidth={150}
+          render={(h) => ({
+            date: dateAt(h.frac, new Date(2026, 3, 1), new Date(2026, 9, 31)),
+            rows: [{ label: metric, color: "#FE7701", value: h.v[0] == null ? "—" : `$${h.v[0].toFixed(1)}B`, tone: "orange" }],
+          })}
+        />
         <div className="tr-plot__y">
           {yLabels.map((l) => (
             <span key={l}>{l}</span>

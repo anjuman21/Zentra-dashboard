@@ -4,6 +4,7 @@ import Modal, { Drawer, Popover, CloseButton } from "../Modal";
 import { Badge } from "../Help";
 import { Toggle, Segmented } from "../Settings";
 import { openFlow, closeFlow } from "../../flows";
+import { aiStore } from "./AiFlows";
 import { transactions } from "../../data";
 import {
   ficons,
@@ -289,6 +290,15 @@ export function AddWatchlist({ store = watchStore, sub = "Pick the coins you wan
 
 /* ───────────── 03B · Watchlist · Coin quick view ───────────── */
 
+// "$96,183.23" scaled to point p (0–1), keeping the label's style ($, k, decimals).
+function scaleLabel(label, p, last) {
+  const m = /^([^0-9]*)([\d,]+(?:\.\d+)?)(k?)(.*)$/.exec(label || "");
+  if (!m) return label;
+  const n = parseFloat(m[2].replace(/,/g, "")) * ((0.85 + 0.15 * p) / (0.85 + 0.15 * last));
+  const dec = (m[2].split(".")[1] || "").length;
+  return `${m[1]}${n.toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec })}${m[3]}${m[4]}`;
+}
+
 export function LineChart({ points, color = "#f7931a", height = 170, label, axis, yLabels }) {
   const w = 400;
   const h = height - 22;
@@ -296,10 +306,29 @@ export function LineChart({ points, color = "#f7931a", height = 170, label, axis
   const ys = points.map((p) => 8 + (1 - p) * (h - 16));
   const line = xs.map((x, i) => `${i ? "L" : "M"}${x.toFixed(1)},${ys[i].toFixed(1)}`).join(" ");
   const id = useMemo(() => `g${Math.random().toString(36).slice(2, 8)}`, []);
-  const lx = xs[xs.length - 1];
-  const ly = ys[ys.length - 1];
+  const box = useRef(null);
+  // Hovering moves the dot, drop line and price to the point under the pointer.
+  const [hover, setHover] = useState(null);
+  const last = points.length - 1;
+  const at = hover ?? last;
+  const lx = xs[at];
+  const ly = ys[at];
+  const move = (e) => {
+    const r = box.current.getBoundingClientRect();
+    const f = (e.clientX - r.left) / r.width / ((w - 40) / w);
+    setHover(Math.min(last, Math.max(0, Math.round(f * last))));
+  };
+  const when = axis && hover != null ? axis[Math.min(axis.length - 1, Math.round((hover / last) * (axis.length - 1)))] : null;
+  const tip = label && (hover == null ? label : scaleLabel(label, points[hover], points[last]));
   return (
-    <div className="fl-chart" style={{ height }}>
+    <div
+      className={`fl-chart${hover != null ? " is-hovering" : ""}`}
+      style={{ height }}
+      ref={box}
+      onPointerMove={move}
+      onPointerDown={move}
+      onPointerLeave={() => setHover(null)}
+    >
       <svg viewBox={`0 0 ${w} ${height}`} preserveAspectRatio="none" role="img" aria-label="Price chart">
         <defs>
           <linearGradient id={id} x1="0" x2="0" y1="0" y2="1">
@@ -310,14 +339,18 @@ export function LineChart({ points, color = "#f7931a", height = 170, label, axis
         {[0.15, 0.4, 0.65, 0.9].map((g) => (
           <line key={g} x1="0" x2={w - 40} y1={g * h} y2={g * h} className="fl-chart__grid" />
         ))}
-        <path d={`${line} L${lx},${h} L0,${h} Z`} fill={`url(#${id})`} />
+        <path d={`${line} L${xs[last]},${h} L0,${h} Z`} fill={`url(#${id})`} />
         <path d={line} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-        <line x1={lx} x2={lx} y1={ly} y2={h} className="fl-chart__drop" />
-        <circle cx={lx} cy={ly} r="3.5" fill={color} stroke="#fff" strokeWidth="1.5" />
+        <line x1={lx} x2={lx} y1={hover != null ? 0 : ly} y2={h} className="fl-chart__drop" vectorEffect="non-scaling-stroke" />
       </svg>
-      {label && (
-        <span className="fl-chart__tip" style={{ right: 44, top: Math.max(0, ly - 30) }}>
-          {label}
+      <span className="fl-chart__dot" style={{ left: `${(lx / w) * 100}%`, top: ly, "--c": color }} />
+      {tip && (
+        <span
+          className="fl-chart__tip"
+          style={hover == null ? { right: 44, top: Math.max(0, ly - 30) } : { left: `${(lx / w) * 100}%`, top: Math.max(0, ly - 34), transform: `translateX(${hover / last > 0.6 ? "-108%" : "8%"})` }}
+        >
+          {when && <span className="fl-chart__when">{when} · </span>}
+          {tip}
         </span>
       )}
       {yLabels && (
@@ -548,6 +581,21 @@ export function TxDetail({ index = 0 }) {
 
 /* ───────────── 05A · Ask AI · Assistant panel ───────────── */
 
+const AI_SUMMARY = "You’re down 2.4% (−$1,168.40) in the last 24h. Most of it comes from ETH (−8%), which is 28% of your holdings. BTC (+12%) offset part of the drop.";
+
+// Maximize: carry this conversation to the full Ask Noa page and continue there.
+function openFullAi(chat) {
+  const id = `c${Date.now()}`;
+  const first = chat.find((m) => m.from === "me")?.text || "New chat";
+  const thread = chat.map((m, i) =>
+    m.from === "me"
+      ? { id: `${id}u${i}`, from: "you", text: m.text }
+      : { id: `${id}n${i}`, from: "noa", text: m.rich ? AI_SUMMARY : m.text, source: "Your portfolio + live prices · Not financial advice" },
+  );
+  aiStore.set((s) => ({ ...s, chats: [{ id, q: first, when: "now", group: "Today" }, ...s.chats], threads: { ...s.threads, [id]: thread }, active: id }));
+  go("ai");
+}
+
 const AI_REPLY = "I looked at your holdings and recent trades. Your biggest exposure is BTC (41%), and most of today’s move came from ETH. Want me to set an alert or show a chart?";
 
 export function AskAiPanel() {
@@ -582,8 +630,11 @@ export function AskAiPanel() {
             </span>
             <span className="fl-sub">Knows your portfolio, markets & activity</span>
           </span>
-          <button type="button" className="fl-round" aria-label="Chat history" onClick={() => go("ai")}>
+          <button type="button" className="fl-round" aria-label="Chat history" title="Chat history" onClick={() => go("ai")}>
             <img className="mono" src={ficons.history} alt="" width="18" height="18" />
+          </button>
+          <button type="button" className="fl-round" aria-label="Open full Ask Noa page" title="Open full page" onClick={() => openFullAi(chat)}>
+            <img className="mono" src={ficons.expand} alt="" width="18" height="18" />
           </button>
           <CloseButton onClick={closeFlow} />
         </div>

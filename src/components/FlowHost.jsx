@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useFlow, closeFlow } from "../flows";
+import ErrorBoundary from "./ErrorBoundary";
 import * as Home from "./flows/HomeFlows";
 import * as Pf from "./flows/PortfolioFlows";
 import * as Mk from "./flows/MarketsFlows";
@@ -109,5 +110,12 @@ export default function FlowHost() {
     return () => window.removeEventListener("hashchange", closeFlow);
   }, []);
   const C = flow && FLOWS[flow.name];
-  return C ? <C key={flow.name + JSON.stringify(flow.props)} {...flow.props} /> : null;
+  if (!C) return null;
+  const key = flow.name + JSON.stringify(flow.props);
+  // A broken overlay closes itself instead of blanking the page underneath.
+  return (
+    <ErrorBoundary resetKey={key} onError={closeFlow}>
+      <C key={key} {...flow.props} />
+    </ErrorBoundary>
+  );
 }

@@ -1,4 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
+import ChartHover, { dateAt } from "./ChartHover";
 import { icons, metrics, legend, yAxis, months, volumeBars, majorTicks, TICK_COUNT, graphTools, mobileChart } from "../data";
 
 const RANGES = ["1M", "3M", "6M", "1Y"];
@@ -50,6 +51,20 @@ const DOT = { orange: icons.dotOrange, grey: icons.dotGrey, blue: icons.dotBlue 
 // chart stretches with the screen while keeping the design's heights.
 const mx = (x) => `${(x / mobileChart.width) * 100}%`;
 
+const COLORS = ["#0379DF", "#FE7701", "#ADADAD"];
+const PCT = [20, 10, 0, -10, -20];
+const pct = (v) => `${v >= 0 ? "+" : "−"}${Math.abs(v).toFixed(2)}%`;
+// Volume reads on its own scale: the grey line spans roughly $20B–$120B.
+const vol = (v) => `$${(70 + v * 2.5).toFixed(2)}B`;
+
+function trendRows({ v }) {
+  return [
+    { label: "Market Cap", color: COLORS[0], value: v[0] == null ? "—" : pct(v[0]), tone: "blue" },
+    { label: "BTC Price", color: COLORS[1], value: v[1] == null ? "—" : pct(v[1]), tone: "orange" },
+    { label: "Volume", color: COLORS[2], value: v[2] == null ? "—" : vol(v[2]), tone: "grey" },
+  ];
+}
+
 // Phones get their own chart window (Jul–Nov) from the mobile design.
 function MobileGraph() {
   const { cursorX, date, tooltipDate, months: labels, ticks, majorTicks: majors, bars, dots } = mobileChart;
@@ -88,6 +103,15 @@ function MobileGraph() {
         </div>
       </div>
       <span className="date-pill m-graph__pill">{date}</span>
+      <ChartHover
+        images=".m-graph__lines"
+        colors={["#0379DF", "#FE7701", "#BABABA"]}
+        axis=".m-graph__grid"
+        values={PCT}
+        span=".m-graph__months"
+        tipWidth={150}
+        render={(h) => ({ date: dateAt(h.frac, new Date(2026, 6, 1), new Date(2026, 10, 30)), rows: trendRows(h) })}
+      />
       {/* The mobile frame keeps the desktop tooltip date while the pill shows Sep 12. */}
       <Tooltip date={tooltipDate} className="m-graph__tooltip" />
     </div>
@@ -165,11 +189,11 @@ export default function MarketTrends() {
             </div>
 
             <img className="series__cursor mono" src={icons.hoverLine} alt="" width="1" height="212" />
-            <img className="series__dot" style={{ "--x": 536, "--y": 51 }} src={icons.dotOrange} alt="" width="10" height="10" />
+            <img className="series__dot is-cursor" style={{ "--x": 536, "--y": 51 }} src={icons.dotOrange} alt="" width="10" height="10" />
             <img className="series__dot" style={{ "--x": 727, "--y": 55 }} src={icons.dotOrange} alt="" width="10" height="10" />
             <img className="series__dot" style={{ "--x": 727, "--y": 66 }} src={icons.dotGrey} alt="" width="10" height="10" />
-            <img className="series__dot" style={{ "--x": 536, "--y": 121 }} src={icons.dotGrey} alt="" width="10" height="10" />
-            <img className="series__dot" style={{ "--x": 536, "--y": 133 }} src={icons.dotBlue} alt="" width="10" height="10" />
+            <img className="series__dot is-cursor" style={{ "--x": 536, "--y": 121 }} src={icons.dotGrey} alt="" width="10" height="10" />
+            <img className="series__dot is-cursor" style={{ "--x": 536, "--y": 133 }} src={icons.dotBlue} alt="" width="10" height="10" />
             <img className="series__dot" style={{ "--x": 728, "--y": 126 }} src={icons.dotBlue} alt="" width="10" height="10" />
           </div>
 
@@ -192,6 +216,15 @@ export default function MarketTrends() {
           <span className="date-pill">Tue, Aug 18 ‘26</span>
 
           <Tooltip date="Tue, Aug 18 ‘26" />
+          <ChartHover
+            images=".series__lines-inner img"
+            colors={COLORS}
+            axis=".series__line"
+            values={PCT}
+            span=".timeline"
+            tipWidth={161}
+            render={(h) => ({ date: dateAt(h.frac, new Date(2026, 3, 1), new Date(2026, 9, 7)), rows: trendRows(h) })}
+          />
         </div>
 
         <MobileGraph />
