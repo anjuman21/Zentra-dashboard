@@ -90,7 +90,7 @@ export default function MobileMenu({ page, onNavigate, open, onClose, theme, onT
         </div>
 
         <div className="m-menu__logout-wrap">
-          <button type="button" className="m-menu__logout" onClick={onClose}>
+          <button type="button" className="m-menu__logout" onClick={() => onNavigate("login")}>
             <img src={icons.logout} alt="" width="18" height="18" />
             <span>Logout</span>
           </button>
