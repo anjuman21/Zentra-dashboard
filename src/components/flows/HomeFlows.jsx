@@ -4,6 +4,7 @@ import Modal, { Drawer, Popover, CloseButton } from "../Modal";
 import { Badge } from "../Help";
 import { Toggle, Segmented } from "../Settings";
 import { openFlow, closeFlow } from "../../flows";
+import { aiStore } from "./AiFlows";
 import { transactions } from "../../data";
 import {
   ficons,
@@ -548,6 +549,21 @@ export function TxDetail({ index = 0 }) {
 
 /* ───────────── 05A · Ask AI · Assistant panel ───────────── */
 
+const AI_SUMMARY = "You’re down 2.4% (−$1,168.40) in the last 24h. Most of it comes from ETH (−8%), which is 28% of your holdings. BTC (+12%) offset part of the drop.";
+
+// Maximize: carry this conversation to the full Ask Noa page and continue there.
+function openFullAi(chat) {
+  const id = `c${Date.now()}`;
+  const first = chat.find((m) => m.from === "me")?.text || "New chat";
+  const thread = chat.map((m, i) =>
+    m.from === "me"
+      ? { id: `${id}u${i}`, from: "you", text: m.text }
+      : { id: `${id}n${i}`, from: "noa", text: m.rich ? AI_SUMMARY : m.text, source: "Your portfolio + live prices · Not financial advice" },
+  );
+  aiStore.set((s) => ({ ...s, chats: [{ id, q: first, when: "now", group: "Today" }, ...s.chats], threads: { ...s.threads, [id]: thread }, active: id }));
+  go("ai");
+}
+
 const AI_REPLY = "I looked at your holdings and recent trades. Your biggest exposure is BTC (41%), and most of today’s move came from ETH. Want me to set an alert or show a chart?";
 
 export function AskAiPanel() {
@@ -582,8 +598,11 @@ export function AskAiPanel() {
             </span>
             <span className="fl-sub">Knows your portfolio, markets & activity</span>
           </span>
-          <button type="button" className="fl-round" aria-label="Chat history" onClick={() => go("ai")}>
+          <button type="button" className="fl-round" aria-label="Chat history" title="Chat history" onClick={() => go("ai")}>
             <img className="mono" src={ficons.history} alt="" width="18" height="18" />
+          </button>
+          <button type="button" className="fl-round" aria-label="Open full Ask Noa page" title="Open full page" onClick={() => openFullAi(chat)}>
+            <img className="mono" src={ficons.expand} alt="" width="18" height="18" />
           </button>
           <CloseButton onClick={closeFlow} />
         </div>

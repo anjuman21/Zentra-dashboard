@@ -32,6 +32,7 @@ import {
 import FinishSetup from "./components/FinishSetup";
 import Help, { helpBack, helpTitle } from "./components/Help";
 import Settings, { settingsBack, settingsTitle } from "./components/Settings";
+import ErrorBoundary, { ScreenError } from "./components/ErrorBoundary";
 import FlowHost from "./components/FlowHost";
 import { openFlow } from "./flows";
 
@@ -128,7 +129,12 @@ export default function App() {
   }, []);
 
   const Onboarding = ONBOARDING[page];
-  if (Onboarding) return <Onboarding key={page} />;
+  if (Onboarding)
+    return (
+      <ErrorBoundary resetKey={page} fallback={(error, retry) => <ScreenError error={error} onRetry={retry} />}>
+        <Onboarding key={page} />
+      </ErrorBoundary>
+    );
 
   return (
     <div className={`app${page === "ai" ? " app--ai" : ""}`}>
@@ -139,6 +145,7 @@ export default function App() {
         <Navbar onMenu={() => setDrawerOpen(true)} />
         <MobileTopbar onMenu={() => setDrawerOpen(true)} back={back} onBack={() => back && navigate(back.route)} />
 
+        <ErrorBoundary resetKey={`${page}/${sub}`} fallback={(error, retry) => <ScreenError error={error} onRetry={retry} />}>
         {page === "portfolio" ? (
           <Portfolio />
         ) : page === "markets" ? (
@@ -176,6 +183,7 @@ export default function App() {
             </aside>
           </main>
         )}
+        </ErrorBoundary>
       </div>
 
       <MobileNav page={page === "setup" ? "overview" : page} onNavigate={navigate} />
