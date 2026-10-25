@@ -8,6 +8,7 @@ import * as An from "./flows/AnalyticsFlows";
 import * as Hi from "./flows/HistoryFlows";
 import * as St from "./flows/StakeFlows";
 import * as Yf from "./flows/YieldFlows";
+import * as Au from "./flows/AutomationFlows";
 
 // Every overlay the pages can open, by name.
 const FLOWS = {
@@ -71,6 +72,13 @@ const FLOWS = {
   "yield.risk": Yf.PoolRisk,
   "yield.range": Yf.YieldRange,
   "yield.menu": Yf.PositionMenu,
+  "auto.create": Au.CreateAutomation,
+  "auto.detail": Au.AutomationDetail,
+  "auto.menu": Au.AutomationMenu,
+  "auto.delete": Au.DeleteAutomation,
+  "auto.failed": Au.FailedRun,
+  "auto.health": Au.HealthBreakdown,
+  "auto.receipt": Au.ExecutionReceipt,
 };
 
 export function registerFlows(map) {
