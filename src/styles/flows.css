@@ -1512,9 +1512,9 @@
   position: fixed;
   inset: 0;
   z-index: 80;
-  background: rgba(10, 10, 14, 0.45);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
 }
 
 :root[data-theme="dark"] .nv-backdrop {
