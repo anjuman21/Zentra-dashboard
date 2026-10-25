@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { openFlow } from "../flows";
 import { icons, mainMenu, financeOps, footerLinks } from "../data";
 import { NavLink } from "./Sidebar";
 
@@ -96,7 +97,15 @@ export default function MobileMenu({ page, onNavigate, open, onClose, theme, onT
         </div>
 
         <div className="m-menu__logout-wrap">
-          <button type="button" className="m-menu__logout" onClick={() => onNavigate("login")}>
+          <button
+            type="button"
+            className="m-menu__logout"
+            aria-haspopup="dialog"
+            onClick={() => {
+              onClose();
+              openFlow("home.logout");
+            }}
+          >
             <img src={icons.logout} alt="" width="18" height="18" />
             <span>Logout</span>
           </button>

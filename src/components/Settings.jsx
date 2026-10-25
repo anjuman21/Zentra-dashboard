@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { openFlow } from "../flows";
 import "../styles/settings.css";
 import Modal, { CloseButton } from "./Modal";
 import { Header, Badge } from "./Help";
@@ -1063,7 +1064,7 @@ function MobileList({ theme, setTheme }) {
       <ul className="sg-mgroup">
         <MobileRow icon={sicons.encrypted} label="AI & privacy" onClick={() => go("settings/ai")} />
         <MobileRow icon={sicons.help} label="Help & Docs" onClick={() => go("help")} />
-        <MobileRow icon={sicons.logout} label="Log out" danger onClick={() => go("login")} />
+        <MobileRow icon={sicons.logout} label="Log out" danger onClick={() => openFlow("home.logout")} />
       </ul>
     </div>
   );
