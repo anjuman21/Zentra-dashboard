@@ -6938,3 +6938,405 @@ button.yf-risk:hover {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* ═════════════ Alerts flows (Figma 539:47341) ═════════════ */
+
+/* Page */
+.mk-chip.is-set {
+  color: var(--hp-brand);
+}
+
+.al-markall:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.al-row.is-quiet .al-row__title {
+  color: var(--text-2);
+}
+
+.al-badge.is-muted {
+  background: var(--hp-sunk);
+  color: var(--text-2);
+}
+
+/* Shared */
+.alf-asset {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--hp-sunk);
+  text-align: left;
+}
+
+.alf-asset__icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--hp-surface);
+}
+
+.alf-asset__icon--lg {
+  width: 40px;
+  height: 40px;
+  background: var(--hp-sunk);
+}
+
+.alf-diff {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.alf-diff.is-up {
+  background: rgba(72, 177, 135, 0.12);
+  color: var(--success);
+}
+
+.alf-diff.is-down {
+  background: rgba(248, 42, 81, 0.1);
+  color: var(--error);
+}
+
+/* 01A · create */
+.alf-create {
+  gap: 18px;
+}
+
+.alf-target {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 14px;
+  border-radius: 14px;
+  background: var(--hp-sunk);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.alf-target:focus-within {
+  box-shadow: inset 0 0 0 1.5px var(--hp-brand);
+}
+
+.alf-target.is-error {
+  box-shadow: inset 0 0 0 1.5px var(--error);
+}
+
+.alf-target input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  padding: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+}
+
+.alf-quick {
+  gap: 6px;
+}
+
+.alf-channels {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.alf-channel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--hp-sunk);
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+}
+
+.alf-channel.is-on {
+  background: rgba(87, 32, 245, 0.1);
+  color: var(--hp-brand);
+}
+
+.alf-channel input,
+.alf-matrix__cell input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.alf-channel input:focus-visible + .hf-box,
+.alf-matrix__cell input:focus-visible + .hf-box {
+  outline: 2px solid var(--hp-focus);
+}
+
+.alf-summary {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(87, 32, 245, 0.08);
+  font-size: 13px;
+  line-height: 19px;
+  color: var(--text-1);
+}
+
+/* 01B · rules */
+.alf-rules {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 14px;
+  border-radius: 16px;
+  background: var(--hp-sunk);
+}
+
+.alf-rule {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.alf-rule + .alf-rule {
+  border-top: 1px solid var(--hp-surface);
+}
+
+.alf-rule .fl-coin__name {
+  flex: 1;
+  min-width: 0;
+}
+
+.alf-lock {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--text-2);
+}
+
+.alf-note {
+  padding: 12px 0 8px;
+}
+
+/* 02A · detail */
+.alf-price {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.alf-price__top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alf-price__now {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.alf-chart {
+  position: relative;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--hp-sunk);
+}
+
+.alf-chart svg {
+  width: 100%;
+  height: 96px;
+  display: block;
+  overflow: visible;
+}
+
+.alf-chart__rule {
+  position: absolute;
+  left: 14px;
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--hp-brand);
+}
+
+.alf-chart__dot {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  margin: 8px 0 0 -4px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px var(--hp-surface);
+}
+
+/* 03A · security */
+.alf-sec {
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.alf-sec > .afl-receipt,
+.alf-sec > .yfl-rows,
+.alf-sec > .sf-foot,
+.alf-sec > .alf-sec__warn {
+  width: 100%;
+  text-align: left;
+}
+
+.alf-sec__icon,
+.sf-done__icon.is-red {
+  width: 56px;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(248, 42, 81, 0.1);
+}
+
+.sf-done__icon.is-red > span {
+  background: var(--error);
+}
+
+.alf-white {
+  filter: brightness(0) invert(1);
+}
+
+.alf-sec__amt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alf-sec .afl-receipt {
+  align-items: center;
+}
+
+.alf-sec__warn {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(248, 42, 81, 0.08);
+  font-size: 12px;
+  line-height: 17px;
+  color: var(--error);
+}
+
+/* 04A · settings */
+.alf-settings {
+  gap: 18px;
+}
+
+.alf-matrix {
+  display: flex;
+  flex-direction: column;
+}
+
+.alf-matrix__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(4, 60px);
+  align-items: center;
+  gap: 4px;
+  padding: 10px 0;
+  border-top: 1px solid var(--hp-line);
+}
+
+.alf-matrix__row.is-head {
+  border-top: 0;
+  padding-top: 0;
+  font-size: 11px;
+  color: var(--text-2);
+}
+
+.alf-matrix__row > :not(:first-child) {
+  justify-self: center;
+}
+
+.alf-matrix__cell {
+  position: relative;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.alf-matrix__lock {
+  opacity: 0.6;
+}
+
+.alf-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--hp-sunk);
+}
+
+/* 05A · row menu */
+.alf-chev {
+  transition: transform 0.15s;
+}
+
+.alf-chev.is-open {
+  transform: rotate(90deg);
+}
+
+.alf-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0 0 4px 28px;
+  padding: 6px;
+  border-radius: 10px;
+  background: var(--hp-sunk);
+}
+
+.alf-sub .fl-sub {
+  padding: 2px 8px;
+}
+
+.alf-sub .fl-menu__item.is-on {
+  font-weight: 500;
+  color: var(--hp-brand);
+}
+
+/* 06A · filters */
+.alf-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
+}
+
+.alf-filters__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.alf-filters__foot .ob-btn {
+  height: 44px;
+  padding: 0 28px;
+}
+
+@media (max-width: 767px) {
+  .alf-channels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .alf-matrix__row {
+    grid-template-columns: minmax(0, 1fr) repeat(4, 40px);
+  }
+}

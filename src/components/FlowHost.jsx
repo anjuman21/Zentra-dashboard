@@ -9,6 +9,7 @@ import * as Hi from "./flows/HistoryFlows";
 import * as St from "./flows/StakeFlows";
 import * as Yf from "./flows/YieldFlows";
 import * as Au from "./flows/AutomationFlows";
+import * as Al from "./flows/AlertFlows";
 
 // Every overlay the pages can open, by name.
 const FLOWS = {
@@ -79,6 +80,14 @@ const FLOWS = {
   "auto.failed": Au.FailedRun,
   "auto.health": Au.HealthBreakdown,
   "auto.receipt": Au.ExecutionReceipt,
+  "alerts.create": Al.CreateAlert,
+  "alerts.rules": Al.AlertRules,
+  "alerts.detail": Al.AlertDetail,
+  "alerts.security": Al.SecurityCheck,
+  "alerts.settings": Al.NotificationSettings,
+  "alerts.menu": Al.AlertMenu,
+  "alerts.filters": Al.AlertFilters,
+  "alerts.more": Al.AlertsMore,
 };
 
 export function registerFlows(map) {
