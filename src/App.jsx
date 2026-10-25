@@ -17,6 +17,19 @@ import Automations from "./components/Automations";
 import Alerts from "./components/Alerts";
 import AiAssistant from "./components/AiAssistant";
 import { SignUp, LogIn, VerifyEmail } from "./components/Auth";
+import {
+  QuickProfile,
+  VerifyIntro,
+  UploadId,
+  Selfie,
+  UnderReview,
+  ConnectWallet,
+  WalletConnected,
+  Deposit,
+  DepositPending,
+  AllSet,
+} from "./components/Onboarding";
+import FinishSetup from "./components/FinishSetup";
 
 function readTheme() {
   try {
@@ -29,11 +42,25 @@ function readTheme() {
 // Hash routes keep deep links working on static hosting (Vercel) without rewrites.
 const PAGES = ["portfolio", "markets", "trade", "analytics", "history", "staking", "yield", "automations", "alerts", "ai"];
 // Onboarding screens are full-screen: no sidebar, navbar or mobile dock.
-const ONBOARDING = { signup: SignUp, login: LogIn, "verify-email": VerifyEmail };
-const TITLES = { overview: "Home", portfolio: "Portfolio", markets: "Markets", trade: "Trade", analytics: "Analytics", history: "History", staking: "Stake", yield: "Yield Farming", automations: "Automations", alerts: "Alerts", ai: "Ask Noa", signup: "Sign up", login: "Log in", "verify-email": "Verify email" };
+const ONBOARDING = {
+  signup: SignUp,
+  login: LogIn,
+  "verify-email": VerifyEmail,
+  profile: QuickProfile,
+  "verify-identity": VerifyIntro,
+  "verify-id": UploadId,
+  "verify-selfie": Selfie,
+  "verify-review": UnderReview,
+  "connect-wallet": ConnectWallet,
+  "wallet-connected": WalletConnected,
+  deposit: Deposit,
+  "deposit-pending": DepositPending,
+  "all-set": AllSet,
+};
+const TITLES = { overview: "Home", portfolio: "Portfolio", markets: "Markets", trade: "Trade", analytics: "Analytics", history: "History", staking: "Stake", yield: "Yield Farming", automations: "Automations", alerts: "Alerts", ai: "Ask Noa", setup: "Finish setup", signup: "Sign up", login: "Log in", "verify-email": "Verify email", profile: "About you", "verify-identity": "Verify identity", "verify-id": "Upload your ID", "verify-selfie": "Take a selfie", "verify-review": "Under review", "connect-wallet": "Connect wallet", "wallet-connected": "Wallet connected", deposit: "First deposit", "deposit-pending": "Deposit on its way", "all-set": "All set" };
 const readPage = () => {
   const route = window.location.hash.replace(/^#\//, "");
-  return PAGES.includes(route) || ONBOARDING[route] ? route : "overview";
+  return PAGES.includes(route) || ONBOARDING[route] || route === "setup" ? route : "overview";
 };
 
 export default function App() {
@@ -69,6 +96,9 @@ export default function App() {
   };
 
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
+  const closeSetup = useCallback(() => {
+    window.location.hash = "#/";
+  }, []);
 
   const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
 
@@ -131,7 +161,8 @@ export default function App() {
         )}
       </div>
 
-      <MobileNav page={page} onNavigate={navigate} />
+      <MobileNav page={page === "setup" ? "overview" : page} onNavigate={navigate} />
+      {page === "setup" && <FinishSetup onClose={closeSetup} />}
       <MobileMenu page={page} onNavigate={navigate} open={drawerOpen} onClose={closeDrawer} theme={theme} onToggleTheme={toggleTheme} />
     </div>
   );

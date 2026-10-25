@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { icons, mainMenu, financeOps, footerLinks } from "../data";
+import { readProgress } from "../onboardingData";
 
 export function NavLink({ item, active, onClick, small }) {
   // Items without a dedicated white glyph get their grey icon turned white on the purple pill.
@@ -15,10 +16,13 @@ export function NavLink({ item, active, onClick, small }) {
   );
 }
 
-function SetupCard() {
-  const [step, setStep] = useState(2);
+function SetupCard({ onOpen }) {
   const [hidden, setHidden] = useState(false);
-  if (hidden) return null;
+  // The step the user is on, shown as "n of 4"; the card goes once all four are done.
+  const progress = readProgress();
+  const done = ["email", "identity", "wallet", "deposit"].filter((k) => progress[k]).length;
+  const step = Math.min(4, done + 1);
+  if (hidden || done === 4) return null;
 
   return (
     <div className="setup-card">
@@ -37,7 +41,7 @@ function SetupCard() {
             <button type="button" className="btn-skip" onClick={() => setHidden(true)}>
               Skip
             </button>
-            <button type="button" className="btn-primary btn-small" onClick={() => setStep((s) => (s < 4 ? s + 1 : s))}>
+            <button type="button" className="btn-primary btn-small" onClick={onOpen}>
               Next
             </button>
           </div>
@@ -125,7 +129,7 @@ export default function Sidebar({ page, onNavigate, open, onClose, theme, onTogg
           </div>
 
           <div className="menu__bottom">
-            <SetupCard />
+            <SetupCard onOpen={() => onNavigate("setup")} />
             <div className="menu__links">
               {footerLinks.map((item) => (
                 <NavLink key={item.label} item={item} small active={false} onClick={() => select(item.label)} />
