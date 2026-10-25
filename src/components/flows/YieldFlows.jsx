@@ -284,9 +284,11 @@ export function PositionDetail({ pair = "ETH/USDC" }) {
       <Drawer onClose={closeFlow} labelledBy="yfl-pos-title">
         <div className="fl-drawer fl-drawer--20">
           <div className="fl-head">
-            <h2 id="yfl-pos-title" className="fl-head__title">
-              Position closed
-            </h2>
+            <div className="fl-head__text">
+              <h2 id="yfl-pos-title" className="fl-head__title">
+                Position closed
+              </h2>
+            </div>
             <CloseButton onClick={closeFlow} />
           </div>
           <p className="fl-sub fl-sub--13">This position moved to History. Open a new one any time from Featured Pools.</p>
