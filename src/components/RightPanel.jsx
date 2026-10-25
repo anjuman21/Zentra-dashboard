@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { icons, watchlist, convertTabs } from "../data";
+import { openFlow } from "../flows";
+import { COINS, watchStore, money } from "../homeFlowData";
 
 const RATE = 25.938; // ETH per BTC, matches "0.1 → ~2.5938" in the design
 
@@ -69,7 +71,11 @@ export function ConvertCard() {
               <img className="mono" src={icons.swapVert} alt="" width="18" height="18" />
             </button>
           </div>
-          <button type="button" className="btn-primary btn-block">
+          <button
+            type="button"
+            className="btn-primary btn-block"
+            onClick={() => openFlow("home.convert-review", { amount: amount || "0.1", from: from.code, to: to.code })}
+          >
             {tab}
           </button>
         </div>
@@ -80,14 +86,27 @@ export function ConvertCard() {
 
 const tone = (v) => (v.startsWith("-") ? "down" : "up");
 
+// Rows added from "Add to Watchlist" use live coin data in the design's format.
+function watchRows(symbols) {
+  return symbols.map((s) => {
+    const known = watchlist.find((w) => w.symbol === s);
+    if (known) return known;
+    const c = COINS[s];
+    const ch = `${c.change < 0 ? "-" : "+"}${Math.abs(Math.round(c.change))}%`;
+    return { symbol: s, icon: c.icon, last: money(c.price, c.price < 1 ? 4 : 2), change: ch, changePct: ch };
+  });
+}
+
 export function Watchlist() {
-  const last = watchlist.length - 1;
+  const rows = watchRows(watchStore.use());
+  const last = rows.length - 1;
+  const open = (symbol) => openFlow("home.coin", { symbol });
   return (
     <div className="card watchlist">
       <div className="watchlist__header">
         <h2 className="card-title">Watchlist</h2>
         <div className="watchlist__actions">
-          <button type="button" className="icon-btn" aria-label="Add symbol">
+          <button type="button" className="icon-btn" aria-label="Add symbol" onClick={() => openFlow("home.add-watch")}>
             <img className="mono" src={icons.add} alt="" width="18" height="18" />
           </button>
           <button type="button" className="icon-btn" aria-label="Pop out">
@@ -103,18 +122,18 @@ export function Watchlist() {
         <div className="wl-col wl-col--symbol">
           <div className="wl-head">Symbol</div>
           <div className="wl-list">
-            {watchlist.map((w, i) => (
-              <div key={w.symbol} className={`wl-cell${i === last ? " is-last" : ""}`}>
+            {rows.map((w, i) => (
+              <button key={w.symbol} type="button" className={`wl-cell wl-cell--btn${i === last ? " is-last" : ""}`} onClick={() => open(w.symbol)}>
                 <img src={w.icon} alt="" width="18" height="18" />
                 <span>{w.symbol}</span>
-              </div>
+              </button>
             ))}
           </div>
         </div>
         <div className="wl-col wl-col--last">
           <div className="wl-head">Last</div>
           <div className="wl-list">
-            {watchlist.map((w, i) => (
+            {rows.map((w, i) => (
               <div key={w.symbol} className={`wl-cell${i === last ? " is-last" : ""}`}>
                 {w.last}
               </div>
@@ -124,7 +143,7 @@ export function Watchlist() {
         <div className="wl-col wl-col--change">
           <div className="wl-head">Change</div>
           <div className="wl-list">
-            {watchlist.map((w, i) => (
+            {rows.map((w, i) => (
               <div key={w.symbol} className={`wl-cell ${tone(w.change)}${i === last ? " is-last" : ""}`}>
                 {w.change}
               </div>
@@ -134,7 +153,7 @@ export function Watchlist() {
         <div className="wl-col wl-col--pct">
           <div className="wl-head">Change %</div>
           <div className="wl-list">
-            {watchlist.map((w, i) => (
+            {rows.map((w, i) => (
               <div key={w.symbol} className={`wl-cell ${tone(w.changePct)}${i === last ? " is-last" : ""}`}>
                 {w.changePct}
               </div>

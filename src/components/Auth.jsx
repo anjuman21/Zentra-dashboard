@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { icons } from "../data";
 import { auicons, testimonials, brandStats, passwordStrength, isEmail } from "../authData";
+import { markDone } from "../onboardingData";
 
 const EMAIL_KEY = "zentra-signup-email";
 const go = (route) => {
@@ -131,7 +132,7 @@ function BrandPanel() {
 
 /* Shared form parts ------------------------------------------------------ */
 
-function Language() {
+export function Language() {
   return (
     <button type="button" className="au-lang">
       <img className="mono" src={icons.language} alt="" width="18" height="18" />
@@ -182,7 +183,7 @@ function Divider({ children }) {
   );
 }
 
-function Field({ id, label, error, trailing, ...input }) {
+export function Field({ id, label, error, trailing, ...input }) {
   return (
     <div className="au-input">
       <label className="au-input__label" htmlFor={id}>
@@ -473,7 +474,8 @@ export function VerifyEmail() {
       focusBox(digits.findIndex((d) => !d));
       return;
     }
-    go("overview");
+    markDone("email");
+    go("profile");
   };
 
   const resend = () => {

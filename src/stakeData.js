@@ -6,38 +6,36 @@ export const sicons = {
   check: a("i-check.svg"),
 };
 
+// Prices, rates and lock terms per coin; what you hold lives in the stake store (stakeFlowData).
 export const stakingAssets = [
-  { name: "Bitcoin", symbol: "BTC", icon: a("t-btc.svg"), apy: "4.32%", staked: "1.875 BTC", stakedUsd: "$5,495.63", rewards: "0.840 BTC", rewardsUsd: "$57,467.60", lock: "Flexible" },
-  { name: "Ethereum", symbol: "ETH", icon: a("t-eth.svg"), apy: "3.45%", staked: "3.900 ETH", stakedUsd: "$11,423.78", rewards: "0.105 ETH", rewardsUsd: "$7,183.45", lock: "Flexible" },
-  { name: "Solana", symbol: "SOL", icon: a("t-sol.svg"), apy: "2.67%", staked: "0.310 SOL", stakedUsd: "$909.34", rewards: "0.630 SOL", rewardsUsd: "$43,100.70", lock: "14 Days" },
-  { name: "BNB", symbol: "BNB", icon: a("t-bnb.svg"), apy: "6.25%", staked: "2.980 BNB", stakedUsd: "$8,729.44", rewards: "0.420 BNB", rewardsUsd: "$28,733.80", lock: "1 Year" },
-  { name: "XRP", symbol: "XRP", icon: a("t-xrp.svg"), apy: "3.85%", staked: "0.750 XRP", stakedUsd: "$2,197.50", rewards: "0.945 XRP", rewardsUsd: "$64,651.05", lock: "7 Days" },
-  { name: "Cardano", symbol: "ADA", icon: a("t-ada.svg"), apy: "5.75%", staked: "4.600 ADA", stakedUsd: "$13,475.92", rewards: "1.050 ADA", rewardsUsd: "$71,834.50", lock: "90 Days" },
-  { name: "Polkadot", symbol: "DOT", icon: a("t-dot.svg"), apy: "5.10%", staked: "1.120 DOT", stakedUsd: "$3,283.12", rewards: "0.735 DOT", rewardsUsd: "$50,284.15", lock: "30 Days" },
-  { name: "Dogecoin", symbol: "DOGE", icon: a("t-doge.svg"), apy: "4.10%", staked: "0.540 DODGE", stakedUsd: "$1,582.09", rewards: "0.210 DODGE", rewardsUsd: "$14,366.90", lock: "60 Days" },
-  { name: "Avalanche", symbol: "AVAX", icon: a("t-avax.svg"), apy: "3.32%", staked: "2.450 AVAX", stakedUsd: "$7,183.45", rewards: "0.525 AVAX", rewardsUsd: "$35,917.25", lock: "180 Days" },
-  { name: "Chainlink", symbol: "LINK", icon: a("t-link.svg"), apy: "4.90%", staked: "3.300 LINK", stakedUsd: "$9,666.30", rewards: "0.315 LINK", rewardsUsd: "$21,550.35", lock: "Lifetime" },
+  { name: "Bitcoin", symbol: "BTC", icon: a("t-btc.svg"), apy: 4.32, price: 96183.23, lock: "Flexible", color: "#f7931a" },
+  { name: "Ethereum", symbol: "ETH", icon: a("t-eth.svg"), apy: 3.45, price: 3218.73, lock: "Flexible", color: "#627eea" },
+  { name: "Solana", symbol: "SOL", icon: a("t-sol.svg"), apy: 2.67, price: 187.4, lock: "14 Days", color: "#9945ff" },
+  { name: "BNB", symbol: "BNB", icon: a("t-bnb.svg"), apy: 6.25, price: 612.35, lock: "1 Year", color: "#f3ba2f" },
+  { name: "XRP", symbol: "XRP", icon: a("t-xrp.svg"), apy: 3.85, price: 2.41, lock: "7 Days", color: "#23292f" },
+  { name: "Cardano", symbol: "ADA", icon: a("t-ada.svg"), apy: 5.75, price: 1.12, lock: "90 Days", color: "#d9d9d9" },
+  { name: "Polkadot", symbol: "DOT", icon: a("t-dot.svg"), apy: 5.1, price: 7.84, lock: "30 Days", color: "#e6007a" },
+  { name: "Dogecoin", symbol: "DOGE", icon: a("t-doge.svg"), apy: 4.1, price: 0.38, lock: "60 Days", color: "#c2a633" },
+  { name: "Avalanche", symbol: "AVAX", icon: a("t-avax.svg"), apy: 3.32, price: 36.24, lock: "180 Days", color: "#e84142" },
+  { name: "Chainlink", symbol: "LINK", icon: a("t-link.svg"), apy: 4.9, price: 22.19, lock: "Lifetime", color: "#2a5ada" },
+];
+
+export const stakeStats = [
+  { label: "Total Staked", value: "$27,980.10", change: "+4.12%", spark: a("m-spark-cap.svg") },
+  { label: "Rewards (30 days)", value: "$99.10", change: "+8.9%", spark: a("m-spark-vol.svg") },
+  { label: "Avg. APY", value: "4.25%", change: "+0.12%", spark: a("m-spark-dom.svg") },
+  { label: "Next Payout", value: "in 6h 12m", change: "daily", tone: "muted", spark: a("m-spark-active.svg") },
 ];
 
 export const LOCK_FILTERS = ["Flexible", "Locked"];
 
-export const stakePortfolio = {
-  value: "$124,456.21",
-  change: "+5.32%",
-  stats: [
-    { label: "Active Stakes", value: "5" },
-    { label: "Total Rewards", value: "$342.18" },
-    { label: "Est. APY", value: "8.42%" },
-  ],
-};
-
 export const rewards = [
-  { symbol: "ETH", icon: a("w-eth.svg"), price: "$10.23", amount: "+0.0125 ETH", usd: "$38.21" },
-  { symbol: "SOL", icon: a("w-sol.svg"), price: "$64.32", amount: "+2.450 SOL", usd: "$27.15" },
-  { symbol: "DOT", icon: a("w-dot.svg"), price: "$18.45", amount: "+18.24 ADA", usd: "$38.21" },
-  { symbol: "ADA", icon: a("w-ada.svg"), price: "$12.45", amount: "+3.12 DOT", usd: "$61.88" },
-  { symbol: "BTC", icon: a("w-btc.svg"), price: "$28,400", amount: "+0.005 BTC", usd: "$142.00" },
-  { symbol: "LTC", icon: a("w-ltc.svg"), price: "$85.22", amount: "+7.56 LTC", usd: "$644.67" },
+  { symbol: "ETH", icon: a("w-eth.svg"), price: "$3,218.73", amount: "+0.0125 ETH", usd: "$40.23" },
+  { symbol: "BNB", icon: a("w-bnb.svg"), price: "$612.35", amount: "+0.0828 BNB", usd: "$50.70" },
+  { symbol: "DOT", icon: a("w-dot.svg"), price: "$7.84", amount: "+4.312 DOT", usd: "$33.81" },
+  { symbol: "ADA", icon: a("w-ada.svg"), price: "$1.12", amount: "+9.81 ADA", usd: "$10.99" },
+  { symbol: "BTC", icon: a("w-btc.svg"), price: "$96,183.23", amount: "+0.00021 BTC", usd: "$20.20" },
+  { symbol: "ETH", icon: a("w-eth.svg"), price: "$3,218.73", amount: "+0.0094 ETH", usd: "$30.26" },
 ];
 
 export const activity = [

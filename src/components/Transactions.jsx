@@ -1,5 +1,6 @@
 import React from "react";
 import { icons, transactions } from "../data";
+import { openFlow } from "../flows";
 
 function Pair({ data }) {
   return (
@@ -31,9 +32,9 @@ export default function Transactions() {
           <div className="tx-head">Buying Currency</div>
           <div className="tx-list">
             {transactions.map((t, i) => (
-              <div key={i} className={`tx-cell${i === last ? " is-last" : ""}`}>
+              <button key={i} type="button" className={`tx-cell tx-cell--btn${i === last ? " is-last" : ""}`} onClick={() => openFlow("home.tx", { index: i })}>
                 <Pair data={t.buy} />
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -89,7 +90,7 @@ export default function Transactions() {
           <div className="tx-list">
             {transactions.map((t, i) => (
               <div key={i} className={`tx-cell${i === last ? " is-last" : ""}`}>
-                <button type="button" className="icon-btn" aria-label="More actions">
+                <button type="button" className="icon-btn" aria-label="Transaction details" onClick={() => openFlow("home.tx", { index: i })}>
                   <img className="mono" src={icons.moreVert} alt="" width="18" height="18" />
                 </button>
               </div>

@@ -17,6 +17,23 @@ import Automations from "./components/Automations";
 import Alerts from "./components/Alerts";
 import AiAssistant from "./components/AiAssistant";
 import { SignUp, LogIn, VerifyEmail } from "./components/Auth";
+import {
+  QuickProfile,
+  VerifyIntro,
+  UploadId,
+  Selfie,
+  UnderReview,
+  ConnectWallet,
+  WalletConnected,
+  Deposit,
+  DepositPending,
+  AllSet,
+} from "./components/Onboarding";
+import FinishSetup from "./components/FinishSetup";
+import Help, { helpBack, helpTitle } from "./components/Help";
+import Settings, { settingsBack, settingsTitle } from "./components/Settings";
+import FlowHost from "./components/FlowHost";
+import { openFlow } from "./flows";
 
 function readTheme() {
   try {
@@ -27,18 +44,35 @@ function readTheme() {
 }
 
 // Hash routes keep deep links working on static hosting (Vercel) without rewrites.
-const PAGES = ["portfolio", "markets", "trade", "analytics", "history", "staking", "yield", "automations", "alerts", "ai"];
+const PAGES = ["portfolio", "markets", "trade", "analytics", "history", "staking", "yield", "automations", "alerts", "ai", "help", "settings"];
 // Onboarding screens are full-screen: no sidebar, navbar or mobile dock.
-const ONBOARDING = { signup: SignUp, login: LogIn, "verify-email": VerifyEmail };
-const TITLES = { overview: "Home", portfolio: "Portfolio", markets: "Markets", trade: "Trade", analytics: "Analytics", history: "History", staking: "Stake", yield: "Yield Farming", automations: "Automations", alerts: "Alerts", ai: "Ask Noa", signup: "Sign up", login: "Log in", "verify-email": "Verify email" };
-const readPage = () => {
+const ONBOARDING = {
+  signup: SignUp,
+  login: LogIn,
+  "verify-email": VerifyEmail,
+  profile: QuickProfile,
+  "verify-identity": VerifyIntro,
+  "verify-id": UploadId,
+  "verify-selfie": Selfie,
+  "verify-review": UnderReview,
+  "connect-wallet": ConnectWallet,
+  "wallet-connected": WalletConnected,
+  deposit: Deposit,
+  "deposit-pending": DepositPending,
+  "all-set": AllSet,
+};
+const TITLES = { overview: "Home", portfolio: "Portfolio", markets: "Markets", trade: "Trade", analytics: "Analytics", history: "History", staking: "Stake", yield: "Yield Farming", automations: "Automations", alerts: "Alerts", ai: "Ask Noa", help: "Help & Docs", settings: "Settings", setup: "Finish setup", signup: "Sign up", login: "Log in", "verify-email": "Verify email", profile: "About you", "verify-identity": "Verify identity", "verify-id": "Upload your ID", "verify-selfie": "Take a selfie", "verify-review": "Under review", "connect-wallet": "Connect wallet", "wallet-connected": "Wallet connected", deposit: "First deposit", "deposit-pending": "Deposit on its way", "all-set": "All set" };
+// A route is a page plus an optional sub-path, e.g. "help/article/withdrawal-pending".
+const readRoute = () => {
   const route = window.location.hash.replace(/^#\//, "");
-  return PAGES.includes(route) || ONBOARDING[route] ? route : "overview";
+  const [head, ...rest] = route.split("/");
+  if (PAGES.includes(head)) return { page: head, sub: rest.join("/") };
+  return { page: ONBOARDING[route] || route === "setup" ? route : "overview", sub: "" };
 };
 
 export default function App() {
   const [theme, setTheme] = useState(readTheme);
-  const [page, setPage] = useState(readPage);
+  const [{ page, sub }, setRoute] = useState(readRoute);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
@@ -51,17 +85,23 @@ export default function App() {
   }, [theme]);
 
   useEffect(() => {
+    let last = window.location.hash;
     const onHash = () => {
-      setPage(readPage());
-      window.scrollTo(0, 0);
+      const now = window.location.hash;
+      setRoute(readRoute());
+      // Opening or closing a dialog route (e.g. #/settings/api/new) keeps the scroll position.
+      if (!(now.startsWith(`${last}/`) || last.startsWith(`${now}/`))) window.scrollTo(0, 0);
+      last = now;
     };
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
   useEffect(() => {
-    document.title = `Zentra — ${TITLES[page]}`;
-  }, [page]);
+    document.title = `Zentra — ${page === "help" ? helpTitle(sub) : page === "settings" ? settingsTitle(sub) : TITLES[page]}`;
+  }, [page, sub]);
+
+  const back = page === "help" ? helpBack(sub) : page === "settings" ? settingsBack(sub) : null;
 
   const navigate = (route) => {
     setDrawerOpen(false);
@@ -69,15 +109,18 @@ export default function App() {
   };
 
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
+  const closeSetup = useCallback(() => {
+    window.location.hash = "#/";
+  }, []);
 
   const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
 
-  // ⌘D / Ctrl+D opens Noa, as the shortcut hint on the Ask AI bar promises.
+  // ⌘D / Ctrl+D opens the Ask AI panel, as the shortcut hint on the Ask AI bar promises.
   useEffect(() => {
     const onKey = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "d") {
         e.preventDefault();
-        window.location.hash = "#/ai";
+        openFlow("home.ai");
       }
     };
     window.addEventListener("keydown", onKey);
@@ -94,7 +137,7 @@ export default function App() {
 
       <div className="main-area">
         <Navbar onMenu={() => setDrawerOpen(true)} />
-        <MobileTopbar onMenu={() => setDrawerOpen(true)} />
+        <MobileTopbar onMenu={() => setDrawerOpen(true)} back={back} onBack={() => back && navigate(back.route)} />
 
         {page === "portfolio" ? (
           <Portfolio />
@@ -116,6 +159,10 @@ export default function App() {
           <Alerts />
         ) : page === "ai" ? (
           <AiAssistant onBack={() => navigate("overview")} />
+        ) : page === "help" ? (
+          <Help sub={sub} />
+        ) : page === "settings" ? (
+          <Settings sub={sub} theme={theme} setTheme={setTheme} />
         ) : (
           <main className="content">
             <section className="main-col">
@@ -131,7 +178,9 @@ export default function App() {
         )}
       </div>
 
-      <MobileNav page={page} onNavigate={navigate} />
+      <MobileNav page={page === "setup" ? "overview" : page} onNavigate={navigate} />
+      {page === "setup" && <FinishSetup onClose={closeSetup} />}
+      <FlowHost />
       <MobileMenu page={page} onNavigate={navigate} open={drawerOpen} onClose={closeDrawer} theme={theme} onToggleTheme={toggleTheme} />
     </div>
   );

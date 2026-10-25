@@ -18,6 +18,9 @@ import {
   performanceTotal,
   topAssets,
 } from "../analyticsData";
+import { openFlow } from "../flows";
+import { anchorOf } from "./Modal";
+import { analyticsStore, BASELINES, fmtDay } from "./flows/AnalyticsFlows";
 
 const PLOT_WIDTH = 840;
 
@@ -41,7 +44,9 @@ function cycle(list, value) {
 }
 
 function Header() {
-  const [compare, setCompare] = useState(false);
+  const st = analyticsStore.use();
+  const base = BASELINES.find((b) => b.key === st.compare);
+  const pop = (name) => (e) => openFlow(name, { anchor: anchorOf(e.currentTarget) });
   return (
     <div className="pf-header">
       <div className="pf-header__text">
@@ -52,15 +57,20 @@ function Header() {
         </p>
       </div>
       <div className="an-actions">
-        <button type="button" className="pf-export an-date">
+        <button type="button" className="pf-export an-date" aria-haspopup="dialog" onClick={pop("analytics.date")}>
           <img className="mono" src={aicons.calendar} alt="" width="18" height="18" />
-          <span>Sep 01, 2026 - Sep 07, 2026</span>
+          <span>
+            {fmtDay(st.from)} - {fmtDay(st.to)}
+          </span>
         </button>
-        <button type="button" className="pf-export an-compare" aria-pressed={compare} onClick={() => setCompare((c) => !c)}>
+        <button type="button" className={`pf-export an-compare${base ? " is-on" : ""}`} aria-haspopup="dialog" onClick={pop("analytics.compare")}>
           <img className="mono" src={icons.arrowDown} alt="" width="18" height="18" />
-          <span>Compare</span>
+          <span>{base ? base.short : "Compare to..."}</span>
         </button>
-        <button type="button" className="pf-export an-square" aria-label="Download report">
+        <button type="button" className="pf-square an-more pf-mobile-only" aria-label="More options" aria-haspopup="dialog" onClick={pop("analytics.more")}>
+          <img className="mono" src="/assets/more-horiz.svg" alt="" width="18" height="18" />
+        </button>
+        <button type="button" className="pf-export an-square" aria-label="Export" aria-haspopup="dialog" onClick={pop("analytics.export")}>
           <img className="mono" src={aicons.download} alt="" width="18" height="18" />
         </button>
       </div>
@@ -72,7 +82,19 @@ function Kpis() {
   return (
     <div className="pf-stats mk-stats">
       {kpis.map((k) => (
-        <div key={k.label} className="pf-stat">
+        <div
+          key={k.label}
+          className={`pf-stat${k.label === "Win Rate" ? " an-kpi--btn" : ""}`}
+          {...(k.label === "Win Rate"
+            ? {
+                role: "button",
+                tabIndex: 0,
+                "aria-label": "Win rate details",
+                onClick: (e) => openFlow("analytics.winrate", { anchor: anchorOf(e.currentTarget) }),
+                onKeyDown: (e) => e.key === "Enter" && openFlow("analytics.winrate", { anchor: anchorOf(e.currentTarget) }),
+              }
+            : {})}
+        >
           <div className="pf-stat__text">
             <p className="kpi__label">{k.label}</p>
             <div className="kpi__value">
@@ -89,6 +111,8 @@ function Kpis() {
 const RANGES = ["24H", "7D", "1M", "1Y"];
 
 function PerformanceChart() {
+  const st = analyticsStore.use();
+  const base = BASELINES.find((b) => b.key === st.compare);
   const [mode, setMode] = useState("Value");
   const [range, setRange] = useState("7D");
   const [ref, sx] = useScale(PLOT_WIDTH);
@@ -102,6 +126,18 @@ function PerformanceChart() {
             <span className="pf-chart__value">$39,551.76</span>
             <span className="pf-chart__change up">+5.33%</span>
           </div>
+          {base && (
+            <div className="an-cmp-legend">
+              <span>
+                <i className="is-you" />
+                Your portfolio +5.33%
+              </span>
+              <span>
+                <i className="is-base" />
+                {base.key === "btc" ? "Bitcoin" : base.label} +2.14%
+              </span>
+            </div>
+          )}
         </div>
         <div className="an-filters">
           <div className="tr-seg an-seg" role="tablist" aria-label="Chart mode">
@@ -139,6 +175,18 @@ function PerformanceChart() {
         </div>
         <div className="an-graph__layer" aria-hidden="true">
           <img className="an-graph__line-img" src={aicons.line} alt="" width="719" height="70" />
+          {base && (
+            <svg className="an-graph__base" viewBox="0 0 719 70" preserveAspectRatio="none">
+              <polyline
+                points="0,48 60,46 120,47 180,43 240,44 300,40 360,42 420,38 480,37 540,34 600,33 660,32 719,30"
+                fill="none"
+                stroke="#5720f5"
+                strokeWidth="1.5"
+                strokeDasharray="5 4"
+                vectorEffect="non-scaling-stroke"
+              />
+            </svg>
+          )}
         </div>
         <span className="an-graph__cursor" aria-hidden="true" />
         <img className="an-graph__dot" src={aicons.dot} alt="" width="10" height="10" aria-hidden="true" />
@@ -202,10 +250,16 @@ function PnlChart() {
           ))}
           <div className="an-pnl__bars" aria-label="Profit and loss by period">
             {pnl.map(([gain, gainTone, loss, lossTone], i) => (
-              <div key={i} className="an-pnl__col">
+              <button
+                key={i}
+                type="button"
+                className="an-pnl__col an-pnl__col--btn"
+                aria-label={`P&L for ${months[Math.min(months.length - 1, Math.floor((i / pnl.length) * months.length))]}`}
+                onClick={(e) => openFlow("analytics.month", { anchor: anchorOf(e.currentTarget), month: months[Math.min(months.length - 1, Math.floor((i / pnl.length) * months.length))] })}
+              >
                 <span className={`an-bar an-bar--up is-${gainTone}`} style={{ height: gain }} />
                 <span className={`an-bar an-bar--down is-${lossTone}`} style={{ height: loss }} />
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -238,7 +292,13 @@ function TradesByTime() {
             <React.Fragment key={heatDays[r]}>
               <span className="an-heat__day">{heatDays[r]}</span>
               {row.map((level, c) => (
-                <span key={c} className={`an-heat__cell lv-${level}`} title={`${heatDays[r]} · level ${level + 1}/6`} />
+                <button
+                  key={c}
+                  type="button"
+                  className={`an-heat__cell an-heat__cell--btn lv-${level}`}
+                  aria-label={`${heatDays[r]} slot ${c + 1}, activity ${level + 1} of 6`}
+                  onClick={(e) => openFlow("analytics.cell", { anchor: anchorOf(e.currentTarget), day: heatDays[r], slot: c, level })}
+                />
               ))}
             </React.Fragment>
           ))}
@@ -280,7 +340,14 @@ function PerformanceCard() {
           <span>Return</span>
         </div>
         {performance.map((p) => (
-          <div key={p.asset} className="an-list__row">
+          <div
+            key={p.asset}
+            className="an-list__row an-list__row--btn"
+            role="button"
+            tabIndex={0}
+            onClick={() => openFlow("analytics.asset", { asset: p.asset })}
+            onKeyDown={(e) => e.key === "Enter" && openFlow("analytics.asset", { asset: p.asset })}
+          >
             <span className="an-list__asset">
               <img src={p.dot} alt="" width="8" height="8" />
               {p.asset}
@@ -326,7 +393,14 @@ function TopAssets() {
           <span>Profit (USD)</span>
         </div>
         {topAssets.map((t, i) => (
-          <div key={t.asset} className={`an-list__row${i === last ? " is-last" : ""}`}>
+          <div
+            key={t.asset}
+            className={`an-list__row an-list__row--btn${i === last ? " is-last" : ""}`}
+            role="button"
+            tabIndex={0}
+            onClick={() => openFlow("analytics.asset", { asset: t.asset })}
+            onKeyDown={(e) => e.key === "Enter" && openFlow("analytics.asset", { asset: t.asset })}
+          >
             <span className="an-list__asset">
               <img src={t.icon} alt="" width="18" height="18" />
               {t.asset}

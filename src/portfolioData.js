@@ -49,7 +49,7 @@ export const assets = [
   { name: "Bitcoin", symbol: "BTC", icon: a("t-btc.svg"), holding: "5.31415 BTC", holdingValue: "$50,267.79", value: "$50,267.79", share: "40.42%", change: "+2.35%", pnl: "+$7,258.32", pnlPct: "+16.87%" },
   { name: "Ethereum", symbol: "ETH", icon: a("t-eth.svg"), holding: "3.14159 ETH", holdingValue: "$7,901.64", value: "$7,901.64", share: "25.52%", change: "-1.25%", pnl: "+$1,203.45", pnlPct: "+13.21%" },
   { name: "Solana", symbol: "SOL", icon: a("t-sol.svg"), holding: "2.71828 SOL", holdingValue: "$3,033.60", value: "$3,033.60", share: "15.78%", change: "+5.32%", pnl: "+$1,258.32", pnlPct: "+28.12%" },
-  { name: "BNB", symbol: "BNB", icon: a("t-ada.svg"), holding: "0.57721 BNB", holdingValue: "$2,602.73", value: "$2,602.73", share: "8.70%", change: "+0.85%", pnl: "+$298.45", pnlPct: "+12.98%" },
+  { name: "BNB", symbol: "BNB", icon: a("t-bnb.svg"), holding: "0.57721 BNB", holdingValue: "$2,602.73", value: "$2,602.73", share: "8.70%", change: "+0.85%", pnl: "+$298.45", pnlPct: "+12.98%" },
   { name: "XRP", symbol: "XRP", icon: a("t-xrp.svg"), holding: "1.61803 XRP", holdingValue: "$1,317.65", value: "$1,317.65", share: "5.58%", change: "-0.12%", pnl: "-$156.32", pnlPct: "-4.23%" },
 ];
 

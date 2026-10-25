@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { icons, mainMenu, financeOps, footerLinks } from "../data";
+import { readProgress } from "../onboardingData";
+import { openFlow } from "../flows";
 
 export function NavLink({ item, active, onClick, small }) {
   // Items without a dedicated white glyph get their grey icon turned white on the purple pill.
@@ -15,10 +17,13 @@ export function NavLink({ item, active, onClick, small }) {
   );
 }
 
-function SetupCard() {
-  const [step, setStep] = useState(2);
+function SetupCard({ onOpen }) {
   const [hidden, setHidden] = useState(false);
-  if (hidden) return null;
+  // The step the user is on, shown as "n of 4"; the card goes once all four are done.
+  const progress = readProgress();
+  const done = ["email", "identity", "wallet", "deposit"].filter((k) => progress[k]).length;
+  const step = Math.min(4, done + 1);
+  if (hidden || done === 4) return null;
 
   return (
     <div className="setup-card">
@@ -37,7 +42,7 @@ function SetupCard() {
             <button type="button" className="btn-skip" onClick={() => setHidden(true)}>
               Skip
             </button>
-            <button type="button" className="btn-primary btn-small" onClick={() => setStep((s) => (s < 4 ? s + 1 : s))}>
+            <button type="button" className="btn-primary btn-small" onClick={onOpen}>
               Next
             </button>
           </div>
@@ -53,14 +58,16 @@ function SetupCard() {
 
 export default function Sidebar({ page, onNavigate, open, onClose, theme, onToggleTheme }) {
   const routed = [...mainMenu, ...financeOps].find((m) => m.route === page);
-  const [active, setActive] = useState(routed ? routed.label : page === "ai" ? null : "Overview");
+  // Footer pages (Help, Settings) highlight their own link instead of a menu item.
+  const footerPage = footerLinks.some((f) => f.route === page);
+  const [active, setActive] = useState(routed ? routed.label : page === "ai" || footerPage ? null : "Overview");
   const dark = theme === "dark";
 
   // Routed items follow the URL; the rest only highlight locally.
   useEffect(() => {
     if (routed) setActive(routed.label);
-    else if (page === "ai") setActive(null);
-  }, [routed, page]);
+    else if (page === "ai" || footerPage) setActive(null);
+  }, [routed, page, footerPage]);
 
   const select = (label) => {
     const item = [...mainMenu, ...financeOps].find((m) => m.label === label);
@@ -89,7 +96,10 @@ export default function Sidebar({ page, onNavigate, open, onClose, theme, onTogg
               type="button"
               className={`ask-ai__bar${page === "ai" ? " is-active" : ""}`}
               aria-current={page === "ai" ? "page" : undefined}
-              onClick={() => onNavigate("ai")}
+              onClick={() => {
+                onClose();
+                openFlow("home.ai");
+              }}
             >
               <span className="ask-ai__label">
                 <img className="mono" src={icons.stars} alt="" width="18" height="18" />
@@ -125,10 +135,16 @@ export default function Sidebar({ page, onNavigate, open, onClose, theme, onTogg
           </div>
 
           <div className="menu__bottom">
-            <SetupCard />
+            <SetupCard onOpen={() => onNavigate("setup")} />
             <div className="menu__links">
               {footerLinks.map((item) => (
-                <NavLink key={item.label} item={item} small active={false} onClick={() => select(item.label)} />
+                <NavLink
+                  key={item.label}
+                  item={item}
+                  small
+                  active={item.route === page}
+                  onClick={() => (item.route ? onNavigate(item.route) : select(item.label))}
+                />
               ))}
               <button type="button" className="nav-link is-small theme-toggle" onClick={onToggleTheme} aria-pressed={dark}>
                 <span className="nav-link__inner">

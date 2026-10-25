@@ -1,22 +1,17 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { icons } from "../data";
 import { micons } from "../marketsData";
 import { aicons } from "../analyticsData";
 import { CardTitle } from "./Portfolio";
-import { ViewAll } from "./YieldFarming";
-import {
-  alicons,
-  alertTabs,
-  alertTypes,
-  alertAssets,
-  alertStatuses,
-  alerts,
-  quickActions,
-  alertSummary,
-  recentAlerts,
-} from "../alertData";
+import { anchorOf } from "./Modal";
+import { openFlow } from "../flows";
+import { alicons, alertTabs, quickActions } from "../alertData";
+import { alertStore, filterAlerts, markRead, dateLabel } from "./flows/AlertFlows";
 
-const next = (list, value) => list[(list.indexOf(value) + 1) % list.length];
+const pop = (name, props) => (e) => {
+  e.stopPropagation();
+  openFlow(name, { anchor: anchorOf(e.currentTarget), ...props });
+};
 
 function Header() {
   return (
@@ -28,7 +23,7 @@ function Header() {
           <span className="pf-mobile-only">Receive alerts for price updates.</span>
         </p>
       </div>
-      <button type="button" className="pf-square al-more" aria-label="More options">
+      <button type="button" className="pf-square al-more" aria-label="More options" aria-haspopup="dialog" onClick={pop("alerts.more")}>
         <img className="mono" src={alicons.more} alt="" width="18" height="18" />
       </button>
     </div>
@@ -44,10 +39,15 @@ function Chip({ label, icon = icons.arrowDown, onClick, className = "" }) {
   );
 }
 
-function AlertRow({ alert, onRead }) {
+function AlertRow({ alert }) {
+  const open = () => {
+    markRead(alert.id);
+    if (alert.type === "Price") openFlow("alerts.detail", { id: alert.id });
+    else if (alert.type === "Security") openFlow("alerts.security", { id: alert.id });
+  };
   return (
-    <li className={`al-row${alert.unread ? " is-unread" : ""}`}>
-      <button type="button" className="al-row__main" onClick={() => onRead(alert.id)}>
+    <li className={`al-row${alert.unread ? " is-unread" : ""}${alert.muted || alert.snoozed ? " is-quiet" : ""}`}>
+      <button type="button" className="al-row__main" onClick={open} aria-haspopup={alert.type === "Price" || alert.type === "Security" ? "dialog" : undefined}>
         <img className="al-row__icon" src={alert.icon} alt="" width="34" height="34" />
         <span className="al-row__text">
           <span className="al-row__title">{alert.title}</span>
@@ -55,12 +55,15 @@ function AlertRow({ alert, onRead }) {
             <span className="pf-desktop-only">{alert.message}</span>
             <span className="pf-mobile-only">{alert.short}</span>
           </span>
-          <span className="al-row__time">{alert.time}</span>
+          <span className="al-row__time">
+            {alert.time}
+            {alert.snoozed ? ` · snoozed ${alert.snoozed.toLowerCase()}` : alert.muted ? " · muted" : ""}
+          </span>
         </span>
       </button>
       <span className="al-row__side">
         <span className={`al-badge is-${alert.tone}`}>{alert.badge}</span>
-        <button type="button" className="icon-btn" aria-label={`More actions for ${alert.title}`}>
+        <button type="button" className="icon-btn" aria-haspopup="dialog" aria-label={`More actions for ${alert.title}`} onClick={pop("alerts.menu", { id: alert.id })}>
           <img className="mono" src={icons.moreVert} alt="" width="18" height="18" />
         </button>
       </span>
@@ -69,65 +72,55 @@ function AlertRow({ alert, onRead }) {
 }
 
 function AlertFeed() {
-  const [tab, setTab] = useState(alertTabs[0]);
-  const [type, setType] = useState(alertTypes[0]);
-  const [asset, setAsset] = useState(alertAssets[0]);
-  const [status, setStatus] = useState(alertStatuses[0]);
-  const [read, setRead] = useState(() => new Set());
-
-  const rows = useMemo(
-    () =>
-      alerts
-        .map((x) => ({ ...x, unread: x.unread && !read.has(x.id) }))
-        .filter((x) => tab === alertTabs[0] || x.tabs.includes(tab))
-        .filter((x) => type === alertTypes[0] || x.type === type)
-        .filter((x) => asset === alertAssets[0] || x.asset === asset)
-        .filter((x) => status === alertStatuses[0] || (status === "Unread") === Boolean(x.unread)),
-    [tab, type, asset, status, read],
-  );
-  const markRead = (id) => setRead((prev) => new Set(prev).add(id));
-  const cycleAll = () => {
-    // One mobile chip steps through the type filter.
-    setType((t) => next(alertTypes, t));
-  };
+  const st = alertStore.use();
+  const [tab, setTab] = useState("All");
+  const f = st.filter;
+  const live = st.alerts.filter((x) => !x.deleted);
+  const unread = live.filter((x) => x.unread).length;
+  const rows = filterAlerts(live, f, tab);
+  const filters = pop("alerts.filters");
+  const filtered = f.types.length || f.status || f.asset || f.date !== "Last 7 days";
+  const tabLabel = (t) => (t === "All" ? `All · ${live.length}` : t === "Unread" ? `Unread · ${unread}` : t);
 
   return (
     <div className="card al-feed">
       <div className="mk-tabs al-tabs" role="tablist" aria-label="Alert lists">
         {alertTabs.map((t) => (
-          <button
-            key={t}
-            type="button"
-            role="tab"
-            aria-selected={t === tab}
-            className={`mk-tab${t === tab ? " is-active" : ""}`}
-            onClick={() => setTab(t)}
-          >
-            {t}
+          <button key={t} type="button" role="tab" aria-selected={t === tab} className={`mk-tab${t === tab ? " is-active" : ""}`} onClick={() => setTab(t)}>
+            {tabLabel(t)}
           </button>
         ))}
       </div>
       <div className="al-feed__body">
         <div className="al-toolbar">
           <div className="al-filters pf-desktop-only">
-            <Chip label="Aug 12, 2026 - Aug 18, 2026" icon={aicons.calendar} />
-            <Chip label={type} onClick={() => setType((t) => next(alertTypes, t))} />
-            <Chip label={asset} onClick={() => setAsset((t) => next(alertAssets, t))} />
-            <Chip label={status} onClick={() => setStatus((t) => next(alertStatuses, t))} />
+            <Chip label={dateLabel(f.date)} icon={aicons.calendar} onClick={filters} className={f.date !== "Last 7 days" ? "is-set" : ""} />
+            <Chip label={f.types.length ? f.types.join(", ") : "All Types"} onClick={filters} className={f.types.length ? "is-set" : ""} />
+            <Chip label={f.asset || "All Assets"} onClick={filters} className={f.asset ? "is-set" : ""} />
+            <Chip label={f.status || "All Status"} onClick={filters} className={f.status ? "is-set" : ""} />
           </div>
-          <Chip
-            label={type === alertTypes[0] ? "Filters" : type}
-            icon={micons.tune}
-            className="al-mobile-filters"
-            onClick={cycleAll}
-          />
-          <ViewAll />
+          <Chip label={filtered ? `Filters · ${rows.length}` : "Filters"} icon={micons.tune} className="al-mobile-filters" onClick={filters} />
+          <button
+            type="button"
+            className="yf-viewall al-markall"
+            disabled={!unread}
+            onClick={() => alertStore.set((s) => ({ ...s, alerts: s.alerts.map((x) => ({ ...x, unread: false })) }))}
+          >
+            <span>Mark all read</span>
+          </button>
         </div>
         <ul className="al-list">
           {rows.map((x) => (
-            <AlertRow key={x.id} alert={x} onRead={markRead} />
+            <AlertRow key={x.id} alert={x} />
           ))}
-          {rows.length === 0 && <li className="mk-empty">No alerts match these filters.</li>}
+          {rows.length === 0 && (
+            <li className="mk-empty">
+              No alerts match these filters.{" "}
+              <button type="button" className="hp-link" onClick={() => alertStore.set((s) => ({ ...s, filter: { date: "Last 7 days", types: [], status: null, asset: null } }))}>
+                Clear filters
+              </button>
+            </li>
+          )}
         </ul>
       </div>
     </div>
@@ -140,7 +133,7 @@ function QuickActions() {
       <h2 className="card-title">Quick Actions</h2>
       <div className="al-tiles">
         {quickActions.map((q) => (
-          <button key={q.label} type="button" className="al-tile al-tile--action">
+          <button key={q.label} type="button" className="al-tile al-tile--action" aria-haspopup="dialog" onClick={q.onClick}>
             <img src={q.icon} alt="" width="30" height="30" />
             <span className="al-tile__label">{q.label}</span>
           </button>
@@ -151,11 +144,19 @@ function QuickActions() {
 }
 
 function Summary() {
+  const st = alertStore.use();
+  const live = st.alerts.filter((x) => !x.deleted);
+  const tiles = [
+    { label: "Total Alerts", value: live.length, icon: "/assets/sum-bell.svg" },
+    { label: "Price", value: live.filter((x) => x.type === "Price").length, icon: "/assets/sum-price.svg" },
+    { label: "Unread", value: live.filter((x) => x.unread).length, icon: "/assets/sum-tx.svg" },
+    { label: "System", value: live.filter((x) => x.type === "System").length, icon: "/assets/sum-system.svg" },
+  ];
   return (
     <div className="card al-side-card al-summary">
-      <h2 className="card-title">Alert Summary</h2>
+      <h2 className="card-title">This week</h2>
       <div className="al-tiles">
-        {alertSummary.map((s) => (
+        {tiles.map((s) => (
           <div key={s.label} className="al-tile al-tile--stat">
             <img src={s.icon} alt="" width="30" height="30" />
             <span className="al-tile__text">
@@ -169,24 +170,31 @@ function Summary() {
   );
 }
 
-function RecentAlerts() {
-  const last = recentAlerts.length - 1;
+const RULE_BADGE = (r) => (r.fired ? ["Triggered", "purple"] : r.locked ? ["Always on", "blue"] : !r.on ? ["Off", "muted"] : r.group === "Price" ? ["Watching", "green"] : ["On", "green"]);
+
+function AlertRules() {
+  const { rules } = alertStore.use();
+  const list = rules.slice(0, 6);
+  const last = list.length - 1;
   return (
     <div className="card al-recent">
-      <CardTitle title="Recent Alerts" />
+      <CardTitle title="Your alert rules" onOpen={() => openFlow("alerts.rules")} />
       <ul className="al-recent__list">
-        {recentAlerts.map((r, i) => (
-          <li key={r.title} className={`al-recent__item${i === last ? " is-last" : ""}`}>
-            <img src={r.icon} alt="" width="24" height="24" />
-            <span className="al-recent__text">
-              <span className="al-recent__title">{r.title}</span>
-              <span className="al-recent__time">{r.time}</span>
-            </span>
-            <span className="al-recent__status">
-              <span className={`al-badge al-badge--sm is-${r.tone}`}>{r.badge}</span>
-            </span>
-          </li>
-        ))}
+        {list.map((r, i) => {
+          const [badge, tone] = RULE_BADGE(r);
+          return (
+            <li key={r.id} className={`al-recent__item${i === last ? " is-last" : ""}`}>
+              <img src={r.icon} alt="" width="22" height="22" />
+              <span className="al-recent__text">
+                <span className="al-recent__title">{r.short}</span>
+                <span className="al-recent__time">{r.side}</span>
+              </span>
+              <span className="al-recent__status">
+                <span className={`al-badge al-badge--sm is-${tone}`}>{badge}</span>
+              </span>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
@@ -203,7 +211,7 @@ export default function Alerts() {
         <aside className="right-col pf-side al-side">
           <QuickActions />
           <Summary />
-          <RecentAlerts />
+          <AlertRules />
         </aside>
       </div>
     </main>

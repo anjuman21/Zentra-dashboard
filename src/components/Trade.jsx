@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { icons, graphTools } from "../data";
 import { micons } from "../marketsData";
 import { CardTitle } from "./Portfolio";
@@ -16,7 +16,6 @@ import {
   bids,
   bookRatio,
   AVAILABLE_USDT,
-  BTC_PRICE,
   FEE_RATE,
 } from "../tradeData";
 
@@ -39,22 +38,41 @@ function usePlotScale() {
   return [ref, sx];
 }
 
+import { openFlow } from "../flows";
+import { anchorOf } from "./Modal";
+import { tradeStore, pairOf, fmt, num } from "../tradeFlowData";
+import { OrderToast } from "./flows/TradeFlows";
+
 const money = (n) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 function PairHeader() {
+  const st = tradeStore.use();
+  const p = pairOf(st.pair);
+  const price = `${p.quote === "BTC" ? "" : "$"}${fmt(p.price, p.price < 1 ? 5 : 2)}`;
   return (
     <div className="tr-head">
-      <div className="tr-pair">
-        <img src={pair.icon} alt="" width="32" height="32" />
+      <button
+        type="button"
+        className="tr-pair tr-pair--btn"
+        aria-haspopup="dialog"
+        aria-label={`Switch trading pair, current ${st.pair}`}
+        onClick={(e) => openFlow("trade.pair", { anchor: anchorOf(e.currentTarget) })}
+      >
+        <img src={p.icon} alt="" width="32" height="32" />
         <div className="tr-pair__text">
-          <span className="tr-pair__symbol">{pair.symbol}</span>
-          <span className="tr-pair__name">{pair.name}</span>
+          <span className="tr-pair__symbol">{st.pair}</span>
+          <span className="tr-pair__name">{p.name}</span>
         </div>
-      </div>
+        <img className="mono tr-pair__caret" src={icons.arrowDown} alt="" width="18" height="18" />
+      </button>
       <div className="tr-price">
-        <span className="tr-price__value">{pair.price}</span>
+        <span className={`tr-price__value${p.change < 0 ? " is-down" : ""}`}>{price}</span>
         <span className="tr-price__sub">
-          {pair.sub} <span className="up">{pair.change}</span>
+          {price}{" "}
+          <span className={p.change < 0 ? "down" : "up"}>
+            {p.change < 0 ? "−" : "+"}
+            {Math.abs(p.change).toFixed(2)}%
+          </span>
         </span>
       </div>
       <div className="tr-stats">
@@ -126,6 +144,15 @@ function PriceChart() {
               </button>
             ))}
           </div>
+          <button
+            type="button"
+            className="tr-settings-btn"
+            aria-label="Chart settings"
+            aria-haspopup="dialog"
+            onClick={(e) => openFlow("trade.chart", { anchor: anchorOf(e.currentTarget) })}
+          >
+            <img className="mono" src="/assets/tune.svg" alt="" width="18" height="18" />
+          </button>
         </div>
         <div className="tr-chart__right">
           {chartToggles.map((t) => (
@@ -199,7 +226,8 @@ function PriceChart() {
 
 function Orders() {
   const [tab, setTab] = useState(orderTabs[0]);
-  const rows = tab === orderTabs[0] ? openOrders : openOrders.slice(0, 3);
+  const st = tradeStore.use();
+  const rows = tab === orderTabs[0] ? st.orders : openOrders.slice(0, 3);
   const last = rows.length - 1;
   return (
     <div className="card tr-orders">
@@ -214,11 +242,16 @@ function Orders() {
               className={`mk-tab${t === tab ? " is-active" : ""}`}
               onClick={() => setTab(t)}
             >
-              {t}
+              {t === orderTabs[0] ? `Open orders (${st.orders.length})` : t}
             </button>
           ))}
         </div>
         <div className="mk-filters">
+          {tab === orderTabs[0] && st.orders.length > 0 && (
+            <button type="button" className="tr-cancel-all" onClick={() => tradeStore.set((x) => ({ ...x, orders: [] }))}>
+              × Cancel all
+            </button>
+          )}
           <button type="button" className="mk-chip">
             <span>USD</span>
             <img className="mono" src={icons.arrowDown} alt="" width="18" height="18" />
@@ -241,7 +274,7 @@ function Orders() {
           </div>
           <div className="mk-rows">
             {rows.map((o, i) => (
-              <div key={o.symbol} className={`mk-row tr-row${i === last ? " is-last" : ""}`} role="row">
+              <div key={o.id || o.symbol} className={`mk-row tr-row${i === last ? " is-last" : ""}`} role="row">
                 <div className="mk-cell mk-cell--coin" role="cell">
                   <img src={o.icon} alt="" width="32" height="32" />
                   <div className="pf-two">
@@ -256,12 +289,19 @@ function Orders() {
                 <div className="mk-cell" role="cell">{o.filled}</div>
                 <div className="mk-cell" role="cell">{o.total}</div>
                 <div className="mk-cell mk-cell--action" role="cell">
-                  <button type="button" className="icon-btn" aria-label={`More actions for ${o.name}`}>
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    aria-label={`More actions for ${o.name}`}
+                    disabled={!o.id}
+                    onClick={(e) => openFlow("trade.order", { id: o.id, anchor: anchorOf(e.currentTarget) })}
+                  >
                     <img className="mono" src={icons.moreVert} alt="" width="18" height="18" />
                   </button>
                 </div>
               </div>
             ))}
+            {rows.length === 0 && <p className="mk-empty">No open orders.</p>}
           </div>
         </div>
       </div>
@@ -274,14 +314,28 @@ const MAJOR_TICKS = new Set([0, 8, 15, 23, 30]);
 
 function TradeForm() {
   const [side, setSide] = useState("Buy");
-  const [mode, setMode] = useState("Limit");
-  const [price, setPrice] = useState("0.1");
+  const st = tradeStore.use();
+  const mode = st.orderType;
+  const p = pairOf(st.pair);
+  const [price, setPrice] = useState(fmt(p.price, p.price < 1 ? 5 : 2).replace(/,/g, ""));
+  const [flash, setFlash] = useState(false);
+  // A click in the order book (03A) or a pair switch fills the price.
+  useEffect(() => {
+    setPrice(String(st.fillPrice ?? fmt(p.price, p.price < 1 ? 5 : 2).replace(/,/g, "")));
+    if (st.fillPrice) {
+      setFlash(true);
+      const t = setTimeout(() => setFlash(false), 700);
+      return () => clearTimeout(t);
+    }
+    return undefined;
+  }, [st.fillPrice, st.pair]);
   const [pct, setPct] = useState(37);
   const [touched, setTouched] = useState(false);
 
-  const limit = parseFloat(price) > 1 ? parseFloat(price) : BTC_PRICE;
+  const limit = mode === "Market" ? p.price : parseFloat(price) || p.price;
   const spend = (AVAILABLE_USDT * pct) / 100;
-  const amount = touched ? `~${(spend / limit).toFixed(4)}` : "~2.5938";
+  const amountN = +(spend / limit).toFixed(p.price > 1000 ? 4 : 2);
+  const amount = touched || st.pair !== "BTC/USDT" ? `~${amountN}` : "~2.5938";
   const fee = touched ? `${money(spend * FEE_RATE)} USDT` : "12.35 USDT";
 
   return (
@@ -302,7 +356,7 @@ function TradeForm() {
               </button>
             ))}
           </div>
-          <button type="button" className="tr-select" onClick={() => setMode((m) => (m === "Limit" ? "Market" : "Limit"))}>
+          <button type="button" className="tr-select" aria-haspopup="dialog" onClick={(e) => openFlow("trade.type", { anchor: anchorOf(e.currentTarget) })}>
             <span>{mode}</span>
             <img className="mono" src={icons.arrowDown} alt="" width="18" height="18" />
           </button>
@@ -323,7 +377,7 @@ function TradeForm() {
                   </label>
                   <input
                     id="trade-price"
-                    className="field__value"
+                    className={`field__value${flash ? " is-flash" : ""}`}
                     inputMode="decimal"
                     value={mode === "Market" ? "Market" : price}
                     disabled={mode === "Market"}
@@ -334,7 +388,7 @@ function TradeForm() {
                   />
                 </div>
                 <span className="tr-select tr-select--field">
-                  <span>USDT</span>
+                  <span>{p.quote}</span>
                   <img className="mono" src={icons.arrowDown} alt="" width="18" height="18" />
                 </span>
               </div>
@@ -344,7 +398,7 @@ function TradeForm() {
                   <span className="field__value">{amount}</span>
                 </div>
                 <span className="tr-select tr-select--field">
-                  <span>BTC</span>
+                  <span>{p.base}</span>
                   <img className="mono" src={icons.arrowDown} alt="" width="18" height="18" />
                 </span>
               </div>
@@ -390,8 +444,13 @@ function TradeForm() {
             </div>
           </div>
 
-          <button type="button" className="btn-primary btn-block">
-            {side} BTC
+          <button
+            type="button"
+            className="btn-primary btn-block"
+            disabled={!amountN}
+            onClick={() => openFlow("trade.review", { side, type: mode, price: limit, amount: touched ? amountN : 0.125 })}
+          >
+            {side} {p.base}
           </button>
 
           <div className="tr-line">
@@ -404,7 +463,15 @@ function TradeForm() {
   );
 }
 
+// 03A · hovering a level shows the cumulative fill; clicking fills the form price.
 function BookSide({ rows, kind }) {
+  const [hover, setHover] = useState(null);
+  const sum = (i) => {
+    const part = kind === "ask" ? rows.slice(i) : rows.slice(0, i + 1);
+    const amt = part.reduce((n, r) => n + num(r.amount), 0);
+    const total = part.reduce((n, r) => n + num(r.amount) * num(r.price), 0);
+    return { amt, total, avg: total / amt };
+  };
   return (
     <div className={`tr-book__side tr-book__side--${kind}`}>
       <div className="tr-book__row tr-book__row--head">
@@ -412,12 +479,44 @@ function BookSide({ rows, kind }) {
         <span>Amount (BTC)</span>
         <span>Total (BTC)</span>
       </div>
-      {rows.map((r) => (
-        <div key={r.price} className="tr-book__row" style={{ "--depth": `${(r.depth / 268) * 100}%` }}>
+      {rows.map((r, i) => (
+        <button
+          key={r.price}
+          type="button"
+          className={`tr-book__row tr-book__row--btn${hover === i ? " is-hover" : ""}`}
+          style={{ "--depth": `${(r.depth / 268) * 100}%` }}
+          onMouseEnter={() => setHover(i)}
+          onMouseLeave={() => setHover(null)}
+          onFocus={() => setHover(i)}
+          onBlur={() => setHover(null)}
+          onClick={() => tradeStore.set((s) => ({ ...s, fillPrice: num(r.price) }))}
+          aria-label={`Fill price ${r.price}`}
+        >
           <span className="tr-book__price">{r.price}</span>
           <span>{r.amount}</span>
           <span>{r.total}</span>
-        </div>
+          {hover === i && (
+            <span className="tr-book__tip" role="tooltip">
+              <span className="tr-book__tip-head">Click to fill price</span>
+              <span className="tr-book__tip-row">
+                <span>Price</span>
+                <b>{r.price}</b>
+              </span>
+              <span className="tr-book__tip-row">
+                <span>Sum amount</span>
+                <b>{sum(i).amt.toFixed(5)} BTC</b>
+              </span>
+              <span className="tr-book__tip-row">
+                <span>Sum total</span>
+                <b>≈ {fmt(sum(i).total)} USDT</b>
+              </span>
+              <span className="tr-book__tip-row">
+                <span>Avg. price</span>
+                <b>{fmt(sum(i).avg)}</b>
+              </span>
+            </span>
+          )}
+        </button>
       ))}
     </div>
   );
@@ -428,6 +527,7 @@ function OrderBook() {
     <div className="card tr-book">
       <CardTitle title="Order Book" />
       <BookSide rows={asks} kind="ask" />
+      <span className="tr-book__spread">Spread 0.40 · 0.0004%</span>
       <div className="tr-book__last">
         <span className="tr-book__last-value">
           {pair.price}
@@ -459,6 +559,7 @@ function OrderBook() {
 export default function Trade() {
   return (
     <main className="content markets trade">
+      <OrderToast />
       <section className="main-col mk-col">
         <PairHeader />
         <div className="tr-main">
