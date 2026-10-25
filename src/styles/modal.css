@@ -1,4 +1,4 @@
-/* Shared dialog: centred card over a blurred, whitened page (Figma "Overlay"), bottom sheet on phones. */
+/* Shared dialog: centred card over a dimmed, blurred page, bottom sheet on phones. */
 
 .md-layer {
   position: fixed;
@@ -14,7 +14,7 @@
 .md-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(248, 248, 248, 0.55);
+  background: rgba(10, 10, 14, 0.45);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   animation: md-fade 0.18s ease;
